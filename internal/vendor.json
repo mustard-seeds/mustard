@@ -1,0 +1,76 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"path": "github.com/golang/protobuf/proto",
+			"revision": "2402d76f3d41f928c7902a765dfc872356dd3aad",
+			"revisionTime": "2016-01-06T12:58:00+11:00"
+		},
+		{
+			"path": "golang.org/x/net/context",
+			"revision": "99ca920b6037ef77af8a11297150f7f0d8f4ef80",
+			"revisionTime": "2016-01-15T15:41:16+11:00"
+		},
+		{
+			"path": "golang.org/x/net/http2",
+			"revision": "99ca920b6037ef77af8a11297150f7f0d8f4ef80",
+			"revisionTime": "2016-01-15T15:41:16+11:00"
+		},
+		{
+			"path": "golang.org/x/net/http2/hpack",
+			"revision": "99ca920b6037ef77af8a11297150f7f0d8f4ef80",
+			"revisionTime": "2016-01-15T15:41:16+11:00"
+		},
+		{
+			"path": "golang.org/x/net/internal/timeseries",
+			"revision": "99ca920b6037ef77af8a11297150f7f0d8f4ef80",
+			"revisionTime": "2016-01-15T15:41:16+11:00"
+		},
+		{
+			"path": "golang.org/x/net/trace",
+			"revision": "99ca920b6037ef77af8a11297150f7f0d8f4ef80",
+			"revisionTime": "2016-01-15T15:41:16+11:00"
+		},
+		{
+			"path": "google.golang.org/grpc",
+			"revision": "5da22b92e9485c15a6b284d52cc54d6580864c99",
+			"revisionTime": "2016-01-14T17:41:25-08:00"
+		},
+		{
+			"path": "google.golang.org/grpc/codes",
+			"revision": "5da22b92e9485c15a6b284d52cc54d6580864c99",
+			"revisionTime": "2016-01-14T17:41:25-08:00"
+		},
+		{
+			"path": "google.golang.org/grpc/credentials",
+			"revision": "5da22b92e9485c15a6b284d52cc54d6580864c99",
+			"revisionTime": "2016-01-14T17:41:25-08:00"
+		},
+		{
+			"path": "google.golang.org/grpc/grpclog",
+			"revision": "5da22b92e9485c15a6b284d52cc54d6580864c99",
+			"revisionTime": "2016-01-14T17:41:25-08:00"
+		},
+		{
+			"path": "google.golang.org/grpc/metadata",
+			"revision": "5da22b92e9485c15a6b284d52cc54d6580864c99",
+			"revisionTime": "2016-01-14T17:41:25-08:00"
+		},
+		{
+			"path": "google.golang.org/grpc/naming",
+			"revision": "5da22b92e9485c15a6b284d52cc54d6580864c99",
+			"revisionTime": "2016-01-14T17:41:25-08:00"
+		},
+		{
+			"path": "google.golang.org/grpc/peer",
+			"revision": "5da22b92e9485c15a6b284d52cc54d6580864c99",
+			"revisionTime": "2016-01-14T17:41:25-08:00"
+		},
+		{
+			"path": "google.golang.org/grpc/transport",
+			"revision": "5da22b92e9485c15a6b284d52cc54d6580864c99",
+			"revisionTime": "2016-01-14T17:41:25-08:00"
+		}
+	]
+}
