@@ -8,6 +8,11 @@
 			"revisionTime": "2016-01-06T12:58:00+11:00"
 		},
 		{
+			"path": "github.com/vharitonsky/iniflags",
+			"revision": "02b57ef987a5ee59eedc7dcd93315a43f6dcc4a7",
+			"revisionTime": "2015-11-14T13:23:54+02:00"
+		},
+		{
 			"path": "golang.org/x/net/context",
 			"revision": "99ca920b6037ef77af8a11297150f7f0d8f4ef80",
 			"revisionTime": "2016-01-15T15:41:16+11:00"
