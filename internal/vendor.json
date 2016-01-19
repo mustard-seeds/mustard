@@ -3,6 +3,16 @@
 	"ignore": "test",
 	"package": [
 		{
+			"path": "github.com/PuerkitoBio/goquery",
+			"revision": "417cce822c7b9a379df5824be95228d177c5698b",
+			"revisionTime": "2015-09-27T16:28:20-04:00"
+		},
+		{
+			"path": "github.com/andybalholm/cascadia",
+			"revision": "3ad29d1ad1c4f2023e355603324348cf1f4b2d48",
+			"revisionTime": "2015-07-30T10:44:59-07:00"
+		},
+		{
 			"path": "github.com/golang/protobuf/proto",
 			"revision": "2402d76f3d41f928c7902a765dfc872356dd3aad",
 			"revisionTime": "2016-01-06T12:58:00+11:00"
@@ -14,6 +24,16 @@
 		},
 		{
 			"path": "golang.org/x/net/context",
+			"revision": "99ca920b6037ef77af8a11297150f7f0d8f4ef80",
+			"revisionTime": "2016-01-15T15:41:16+11:00"
+		},
+		{
+			"path": "golang.org/x/net/html",
+			"revision": "99ca920b6037ef77af8a11297150f7f0d8f4ef80",
+			"revisionTime": "2016-01-15T15:41:16+11:00"
+		},
+		{
+			"path": "golang.org/x/net/html/atom",
 			"revision": "99ca920b6037ef77af8a11297150f7f0d8f4ef80",
 			"revisionTime": "2016-01-15T15:41:16+11:00"
 		},
