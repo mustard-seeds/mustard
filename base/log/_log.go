@@ -3,54 +3,48 @@ package log
 import (
 	"io"
 	"log"
-	"fmt"
 	"os"
+	"fmt"
+	"unsafe"
 	"mustard/base/conf"
 )
 
 /*
 * Debug(Log Level) - Info - Warning - Error -
 */
-
-// combination version, it hide log.Logger method.
+// inheritance version
 type logS struct {
-	logI  *log.Logger
+	log.Logger
 	level int
 }
 
 func (l *logS) Debugf(format string, v ...interface{}) {
 	if l.level <= *conf.Conf.LogV {
-		l.logI.SetPrefix("[Debug]")
-		l.logI.Output(2, fmt.Sprintf(format, v...))
+		l.SetPrefix("[Debug]")
+		l.Output(2, fmt.Sprintf(format, v...))
 	}
 }
 
 func (l *logS) Debug(v ...interface{}) {
 	if l.level <= *conf.Conf.LogV {
-		l.logI.SetPrefix("[Debug]")
-		l.logI.Output(2, fmt.Sprintln(v...))
+		l.SetPrefix("[Debug]")
+		l.Output(2, fmt.Sprintln(v...))
 	}
 }
 
 func (l *logS) Info(v ...interface{}) {
-	l.logI.SetPrefix("[Info]")
-	l.logI.Output(2, fmt.Sprintln(v...))
+	l.SetPrefix("[Info]")
+	l.Output(2, fmt.Sprintln(v...))
 }
 
 func (l *logS) Warning(v ...interface{}) {
-	l.logI.SetPrefix("[Warning]")
-	l.logI.Output(2, fmt.Sprintln(v...))
+	l.SetPrefix("[Warning]")
+	l.Output(2, fmt.Sprintln(v...))
 }
 
 func (l *logS) Error(v ...interface{}) {
-	l.logI.SetPrefix("[Error]")
-	l.logI.Println(v)
-}
-
-func (l *logS)Fatal(v ...interface{}) {
-	l.logI.SetPrefix("[Fatal]")
-	l.logI.Output(2, fmt.Sprint(v...))
-	os.Exit(1)
+	l.SetPrefix("[Error]")
+	l.Output(2, fmt.Sprintln(v...))
 }
 
 // VLog user pairly with Debug
@@ -60,7 +54,7 @@ func (l *logS) VLog(level int) *logS {
 	return l
 }
 
-var Log logS
+var Log *logS
 
 func init() {
 	var writer io.Writer
@@ -76,5 +70,5 @@ func init() {
 	if *conf.Conf.Stdout && writer != os.Stdout {
 		writer = io.MultiWriter(writer, os.Stdout)
 	}
-	Log.logI = log.New(writer, "", log.LstdFlags|log.Lshortfile)
+	Log = (*logS)(unsafe.Pointer(log.New(writer, "", log.LstdFlags|log.Lshortfile)))
 }

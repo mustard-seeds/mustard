@@ -6,17 +6,18 @@ import (
 )
 
 type ConfType struct {
-	UseStdout *bool
-	LogDir   *string
+	LogFile   	*string
+	LogV 		*int
+	Stdout		*bool
 
-	Example  ExampleType
+	Example  	ExampleType
 }
 
 var _conf = ConfType{
-	UseStdout: flag.Bool("use_stdout", true, "output to stdout"),
-	LogDir:   flag.String("log_dir", "", "log to file"),
-
-	Example:      ExampleConf,
+	LogFile		:	flag.String("log_file", "", "log to file"),
+	LogV		:	flag.Int("v", 1, "log level for debug"),
+	Stdout		:	flag.Bool("stdout", true, "output stdout or not"),
+	Example		:      	ExampleConf,
 }
 
 var Conf *ConfType
