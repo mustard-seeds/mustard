@@ -28,6 +28,7 @@ func (p *HtmlParser) Parse(_url, _content string) (result bool, err error) {
 	p._url = u
 	p._content = _content
 	var root *html.Node
+	// strings.NewReader, make string like io.Reader
 	if root, e = html.Parse(strings.NewReader(p._content)); e != nil {
 		LOG.Error("parse fail. url:" + p._url.String())
 		return false, e
