@@ -1,6 +1,7 @@
 package page_analysis
 
 import (
+        "regexp"
         "strings"
         "net/url"
         "mustard/base/log"
@@ -11,7 +12,7 @@ var LOG = log.Log
 
 type RegexCallback struct {
         regex   string
-        callback        func([]string)
+        callback        func(int, []string)
 }
 type SelectorCallback struct {
 	selector	string
@@ -29,18 +30,21 @@ type HtmlParser struct {
 
 // TODO(gaolichuang) registe, parse and callback
 // the call back cloud be call multi times !!!
-func (p *HtmlParser) RegisterRegex(regex string, callback func([]string)) {
+func (p *HtmlParser)RegisterRegex(regex string, callback func(int, []string)) {
         p._regCallbacks = append(p._regCallbacks, &RegexCallback{regex, callback})
 }
 
-func (p *HtmlParser) RegisterSelectorWithTextKeyWord(selector string, keyword string, callback func(int, *goquery.Selection)) {
+func (p *HtmlParser)RegisterSelectorWithTextKeyWord(selector string, keyword string, callback func(int, *goquery.Selection)) {
 	p._selectorCallbacks = append(p._selectorCallbacks, &SelectorCallback{selector, keyword, callback})
 }
-func (p *HtmlParser) RegisterSelector(selector string, callback func(int, *goquery.Selection)) {
+func (p *HtmlParser)RegisterSelector(selector string, callback func(int, *goquery.Selection)) {
 	p.RegisterSelectorWithTextKeyWord(selector, "", callback)
 }
 
-func (p *HtmlParser) Parse(_url, _content string) (result bool, err error) {
+func (p *HtmlParser)parseInternal() {
+
+}
+func (p *HtmlParser)Parse(_url, _content string) (result bool, err error) {
         var u *url.URL
         var e error
         if u, e = url.Parse(_url);e != nil {
@@ -57,7 +61,7 @@ func (p *HtmlParser) Parse(_url, _content string) (result bool, err error) {
         }
         p._doc = goquery.NewDocumentFromNode(root)
         for _,c := range p._regCallbacks {
-		c.callback("hello")
+		        c.callback("hello")
         }
         return true, nil
 }
