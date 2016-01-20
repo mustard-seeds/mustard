@@ -96,6 +96,26 @@
 			"path": "google.golang.org/grpc/transport",
 			"revision": "5da22b92e9485c15a6b284d52cc54d6580864c99",
 			"revisionTime": "2016-01-14T17:41:25-08:00"
+		},
+		{
+			"path": "gopkg.in/mgo.v2",
+			"revision": "03c9f3ee4c14c8e51ee521a6a7d0425658dd6f64",
+			"revisionTime": "2016-01-18T12:58:58-02:00"
+		},
+		{
+			"path": "gopkg.in/mgo.v2/bson",
+			"revision": "03c9f3ee4c14c8e51ee521a6a7d0425658dd6f64",
+			"revisionTime": "2016-01-18T12:58:58-02:00"
+		},
+		{
+			"path": "gopkg.in/mgo.v2/internal/sasl",
+			"revision": "03c9f3ee4c14c8e51ee521a6a7d0425658dd6f64",
+			"revisionTime": "2016-01-18T12:58:58-02:00"
+		},
+		{
+			"path": "gopkg.in/mgo.v2/internal/scram",
+			"revision": "03c9f3ee4c14c8e51ee521a6a7d0425658dd6f64",
+			"revisionTime": "2016-01-18T12:58:58-02:00"
 		}
 	]
 }
