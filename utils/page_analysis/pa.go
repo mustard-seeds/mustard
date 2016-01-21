@@ -10,17 +10,24 @@ import (
 )
 var LOG = log.Log
 
+/*
+  Html Selector
+        $("p")  <p> elements.
+        $(".test")  all elements with class="test".
+        $("#test")  the element with id="test".
+*/
+
 type RegexCallback struct {
         regex   string
         callback        func(int, []string)
 }
 type SelectorCallback struct {
-	selector	string
-	callback	func(int, *goquery.Selection)
+        selector        string
+        keyWord         string
+        callback        func(int, *goquery.Selection)
 }
 type HtmlParser struct {
         _content string
-        _done bool
         _url *url.URL
         _doc *goquery.Document
         _regCallbacks []*RegexCallback
@@ -29,7 +36,7 @@ type HtmlParser struct {
 
 
 // TODO(gaolichuang) registe, parse and callback
-// the call back cloud be call multi times !!!
+// callback will be called multi time for each
 func (p *HtmlParser)RegisterRegex(regex string, callback func(int, []string)) {
         p._regCallbacks = append(p._regCallbacks, &RegexCallback{regex, callback})
 }
@@ -37,12 +44,33 @@ func (p *HtmlParser)RegisterRegex(regex string, callback func(int, []string)) {
 func (p *HtmlParser)RegisterSelectorWithTextKeyWord(selector string, keyword string, callback func(int, *goquery.Selection)) {
 	p._selectorCallbacks = append(p._selectorCallbacks, &SelectorCallback{selector, keyword, callback})
 }
+
 func (p *HtmlParser)RegisterSelector(selector string, callback func(int, *goquery.Selection)) {
 	p.RegisterSelectorWithTextKeyWord(selector, "", callback)
 }
 
 func (p *HtmlParser)parseInternal() {
-
+        // TODO(gaolichuang): optimize to travel DOM and parse each field
+        // regex parse
+        for _,c := range p._regCallbacks {
+                r,_ := regexp.Compile(c.regex)
+                regexRet := r.FindAllStringSubmatch(p._content, -1)
+                for i,reg := range regexRet {
+                        c.callback(i, reg)
+                }
+        }
+        // selector parse
+        for _,se := range p._selectorCallbacks {
+                p._doc.Find(se.selector).Each(func(i int, s *goquery.Selection){
+                        if len(se.keyWord) == 0 {
+                                se.callback(i, s)
+                        } else {
+                                if strings.Contains(s.Text(), se.keyWord) {
+                                        se.callback(i, s)
+                                }
+                        }
+                })
+        }
 }
 func (p *HtmlParser)Parse(_url, _content string) (result bool, err error) {
         var u *url.URL
@@ -60,36 +88,10 @@ func (p *HtmlParser)Parse(_url, _content string) (result bool, err error) {
                 return false, e
         }
         p._doc = goquery.NewDocumentFromNode(root)
-        for _,c := range p._regCallbacks {
-		        c.callback("hello")
-        }
+        p.parseInternal()
         return true, nil
 }
-/*
-$("p")  <p> elements.
-$(".test")  all elements with class="test".
-$("#test")  the element with id="test".
-*/
-func (p *HtmlParser) GetLinkByHost(host string) map[string]string {
-        var links = map[string]string{}
-        p._doc.Find("a").Each(func(i int, s *goquery.Selection){
-                href , _ := s.Attr("href")
-                if strings.HasPrefix(href,"/") {
-                        if host == "" || strings.Compare(p._url.Host, host) == 0 {
-                                links["http://" + p._url.Host + href] = s.Text()
-                        }
-                } else if strings.HasPrefix(href, "http") {
-                        if u, e := url.Parse(href);e != nil {
-                                return
-                        } else {
-                                if host == "" || strings.Compare(u.Host, host) == 0 {
-                                        links[u.String()] = s.Text()
-                                }
-                        }
-                }
-        })
-        return links
-}
+
 func (p *HtmlParser) GetDocument() *goquery.Document {
         return p._doc
 }
