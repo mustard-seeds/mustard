@@ -78,3 +78,12 @@ func init() {
 	}
 	Log.logI = log.New(writer, "", log.LstdFlags|log.Lshortfile)
 }
+// test
+/*
+func main() {
+	LOG.Info("hello world")
+	LOG.VLog(1).Debug("debug message1")
+	LOG.VLog(2).Debug("debug message2")
+	LOG.VLog(3).Debug("debug message3")
+}
+//*/
