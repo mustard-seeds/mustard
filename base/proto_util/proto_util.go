@@ -1,5 +1,8 @@
 package proto_util
 
+// proto3 syntax
+// https://developers.google.com/protocol-buffers/docs/proto3
+
 import (
 	"mustard/base/log"
 	"mustard/internal/github.com/golang/protobuf/proto"
