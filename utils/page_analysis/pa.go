@@ -34,6 +34,7 @@ type HtmlParser struct {
         _selectorCallbacks []*SelectorCallback
 }
 
+func (m *HtmlParser) Reset()  { *m = HtmlParser{} }
 
 // TODO(gaolichuang) registe, parse and callback
 // callback will be called multi time for each
