@@ -18,49 +18,71 @@ type logS struct {
 	level int
 }
 
-func (l *logS) Debugf(format string, v ...interface{}) {
-	if l.level <= *conf.Conf.LogV {
-		l.logI.SetPrefix("[Debug]")
-		l.logI.Output(2, fmt.Sprintf(format, v...))
+var _log logS
+
+func Debugf(format string, v ...interface{}) {
+	if _log.level <= *conf.Conf.LogV {
+		_log.logI.SetPrefix("[Debug]")
+		_log.logI.Output(2, fmt.Sprintf(format, v...))
 	}
 }
 
-func (l *logS) Debug(v ...interface{}) {
-	if l.level <= *conf.Conf.LogV {
-		l.logI.SetPrefix("[Debug]")
-		l.logI.Output(2, fmt.Sprintln(v...))
+func Debug(v ...interface{}) {
+	if _log.level <= *conf.Conf.LogV {
+		_log.logI.SetPrefix("[Debug]")
+		_log.logI.Output(2, fmt.Sprintln(v...))
 	}
 }
 
-func (l *logS) Info(v ...interface{}) {
-	l.logI.SetPrefix("[Info]")
-	l.logI.Output(2, fmt.Sprintln(v...))
+func Info(v ...interface{}) {
+	_log.logI.SetPrefix("[Info]")
+	_log.logI.Output(2, fmt.Sprintln(v...))
 }
 
-func (l *logS) Warning(v ...interface{}) {
-	l.logI.SetPrefix("[Warning]")
-	l.logI.Output(2, fmt.Sprintln(v...))
+func Infof(format string, v ...interface{}) {
+	_log.logI.SetPrefix("[Info]")
+	_log.logI.Output(2, fmt.Sprintf(format, v...))
 }
 
-func (l *logS) Error(v ...interface{}) {
-	l.logI.SetPrefix("[Error]")
-	l.logI.Println(v)
+func Warning(v ...interface{}) {
+	_log.logI.SetPrefix("[Warning]")
+	_log.logI.Output(2, fmt.Sprintln(v...))
 }
 
-func (l *logS)Fatal(v ...interface{}) {
-	l.logI.SetPrefix("[Fatal]")
-	l.logI.Output(2, fmt.Sprint(v...))
+func Warningf(format string,v ...interface{}) {
+	_log.logI.SetPrefix("[Warning]")
+	_log.logI.Output(2, fmt.Sprintf(format,v...))
+}
+
+func Error(v ...interface{}) {
+	_log.logI.SetPrefix("[Error]")
+	_log.logI.Output(2, fmt.Sprintln(v...))
+}
+
+func Errorf(format string, v ...interface{}) {
+	_log.logI.SetPrefix("[Error]")
+	_log.logI.Output(2, fmt.Sprintf(format,v...))
+}
+
+func Fatal(v ...interface{}) {
+	_log.logI.SetPrefix("[Fatal]")
+	_log.logI.Output(2, fmt.Sprint(v...))
+	os.Exit(1)
+}
+
+func Fatalf(format string, v ...interface{}) {
+	_log.logI.SetPrefix("[Fatal]")
+	_log.logI.Output(2, fmt.Sprintf(format, v...))
 	os.Exit(1)
 }
 
 // VLog user pairly with Debug
 // chain function call
-func (l *logS) VLog(level int) *logS {
-	l.level = level
-	return l
+func VLog(level int) *logS {
+	_log.level = level
+	return &_log
 }
 
-var Log logS
 
 func init() {
 	var writer io.Writer
@@ -76,7 +98,7 @@ func init() {
 	if *conf.Conf.Stdout && writer != os.Stdout {
 		writer = io.MultiWriter(writer, os.Stdout)
 	}
-	Log.logI = log.New(writer, "", log.LstdFlags|log.Lshortfile)
+	_log.logI = log.New(writer, "", log.LstdFlags|log.Lshortfile)
 }
 // test
 /*

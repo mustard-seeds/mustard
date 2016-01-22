@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package proto;
+
+service GreetingService {
+    rpc Greeting(GreetRequest) returns (GreetResponse) {}
+    rpc GreetOnce(GreetRequest) returns (GreetResponse) {}
+    rpc GreetMulti(stream GreetRequest) returns (stream GreetResponse) {}
+}
+
+message Person {
+    string name = 1;
+    int32 age = 2;
+}
+message GreetRequest {
+    Person person = 1;
+    repeated string hobbies = 2;
+    map<string, int32> keyword = 3;
+}
+
+message GreetResponse {
+    string content = 1;
+    string attatchment = 2;
+}

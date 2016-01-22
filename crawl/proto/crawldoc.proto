@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package proto;
+
+message CrawlParam {
+
+}
+message CrawlHistory {
+
+}
+
+message CrawlDoc {
+    string  docid = 1;
+    string  url = 2;
+}
+message CrawlRequest {
+
+}
+message CrawlResponse {
+
+}
+service CrawlService {
+    rpc Feed(CrawlDoc) returns (CrawlResponse) {}
+    rpc IsHealthy(CrawlRequest) returns (CrawlResponse) {}
+}

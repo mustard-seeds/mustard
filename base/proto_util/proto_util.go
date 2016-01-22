@@ -4,21 +4,22 @@ package proto_util
 // https://developers.google.com/protocol-buffers/docs/proto3
 
 import (
-	"mustard/base/log"
+	LOG "mustard/base/log"
 	"mustard/internal/github.com/golang/protobuf/proto"
 )
 
 func Serialize(pb proto.Message) ([]byte, error) {
+	LOG.Info("xxxx")
 	r,e := proto.Marshal(pb)
 	if e != nil {
-		log.Log.Error("MarShal failed")
+		LOG.Error("MarShal failed")
 	}
 	return r,e
 }
 func Deserialize(s []byte, pb proto.Message) error {
 	e := proto.Unmarshal(s, pb)
 	if e != nil {
-		log.Log.Error("UnMarShal failed")
+		LOG.Error("UnMarShal failed")
 	}
 	return e
 }
@@ -28,7 +29,7 @@ func FromProtoToString(pb proto.Message) string {
 func FromStringToProto(s string, pb proto.Message) error {
 	e := proto.UnmarshalText(s, pb)
 	if e != nil {
-		log.Log.Error("UnMarShal failed")
+		LOG.Error("UnMarShal failed")
 	}
 	return e
 }

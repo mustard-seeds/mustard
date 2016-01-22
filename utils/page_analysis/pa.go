@@ -4,11 +4,10 @@ import (
         "regexp"
         "strings"
         "net/url"
-        "mustard/base/log"
+        LOG "mustard/base/log"
         "mustard/internal/golang.org/x/net/html"
         "mustard/internal/github.com/PuerkitoBio/goquery"
 )
-var LOG = log.Log
 
 /*
   Html Selector

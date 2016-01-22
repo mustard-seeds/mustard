@@ -18,6 +18,16 @@
 			"revisionTime": "2016-01-06T12:58:00+11:00"
 		},
 		{
+			"path": "github.com/gorilla/context",
+			"revision": "1c83b3eabd45b6d76072b66b746c20815fb2872d",
+			"revisionTime": "2015-08-19T22:12:45-07:00"
+		},
+		{
+			"path": "github.com/gorilla/mux",
+			"revision": "26a6070f849969ba72b72256e9f14cf519751690",
+			"revisionTime": "2015-12-31T08:19:08-08:00"
+		},
+		{
 			"path": "github.com/vharitonsky/iniflags",
 			"revision": "02b57ef987a5ee59eedc7dcd93315a43f6dcc4a7",
 			"revisionTime": "2015-11-14T13:23:54+02:00"
