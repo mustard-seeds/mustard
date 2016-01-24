@@ -2,24 +2,168 @@ syntax = "proto3";
 
 package proto;
 
-message CrawlParam {
+enum ReturnType {
+    UNKNOWN                 = 0;
+    NODNS                   = 1;
+    NOCONNECTION            = 2;
+    FORBIDDENROBOTS         = 3;
+    TIMEOUT                 = 4;
+    BADTYPE                 = 5;
+    TOOBIG                  = 6;
+    BADHEADER               = 7;
+    NETWORKERROR            = 8;
+    SITEQUEUEFULL           = 9;
+    INVALIDURL              = 10;
+    INVALIDREDIRECTURL      = 11;
+    META_REDIRECT           = 12;
+    JS_REDIRECT             = 13;
+    IP_BLACKLISTED          = 14;
+    BADCONTENT              = 15;
+    URL_BLACKLISTED         = 16;
 
+    STATUS100 = 100;
+    STATUS101 = 101;
+
+    STATUS200 = 200;
+    STATUS201 = 201;
+    STATUS202 = 202;
+    STATUS203 = 203;
+    STATUS204 = 204;
+    STATUS205 = 205;
+    STATUS206 = 206;
+
+    STATUS300 = 300;
+    STATUS301 = 301;
+    STATUS302 = 302;
+    STATUS303 = 303;
+    STATUS304 = 304;
+    STATUS305 = 305;
+    STATUS306 = 306;
+    STATUS307 = 307;
+
+    STATUS400 = 400;
+    STATUS401 = 401;
+    STATUS402 = 402;
+    STATUS403 = 403;
+    STATUS404 = 404;
+    STATUS405 = 405;
+    STATUS406 = 406;
+    STATUS407 = 407;
+    STATUS408 = 408;
+    STATUS409 = 409;
+    STATUS410 = 410;
+    STATUS411 = 411;
+    STATUS412 = 412;
+    STATUS413 = 413;
+    STATUS414 = 414;
+    STATUS415 = 415;
+    STATUS416 = 416;
+    STATUS417 = 417;
+
+    STATUS500 = 500;
+    STATUS501 = 501;
+    STATUS502 = 502;
+    STATUS503 = 503;
+    STATUS504 = 504;
+    STATUS505 = 505;
+    STATUS509 = 509;
+    STATUS510 = 510;
 }
+enum RequestType {
+    TESTING     = 0;
+    GENERAL     = 1;
+}
+
+enum Priority {
+    NORMAL  =   0;
+    URGENT  =   1;
+}
+
+enum DocType {
+    NORMALDOC      =   0;
+    WEB_MAIN    =   1;
+    WEB_HUB     =   2;
+    WEB_CONTENT =   3;
+}
+message ConnectionInfo {
+    string host = 1;
+    int32  port = 2;
+}
+message OutLink {
+    string  url  = 1;
+    string  text = 2;
+}
+message FetchHint {
+    string host =   1;
+    string path =   2;
+    int32   ip  =   3;
+    int32   port    =   4;
+    string post_data = 5;
+}
+message CrawlParam {
+    Priority    pri         =   1;
+    int32   hostload        =   2;
+    bool    random_hostload =   3;
+    bool    drop_content    =   4;
+    DocType dtype           =   5;
+    string  store_path      =   6;
+    string  store_db        =   7;
+    string  store_table     =   8;
+    string  fake_host       =   9;
+    RequestType rtype       =   10;
+    FetchHint fetch_hint    =   11;
+    repeated ConnectionInfo receivers   = 12;
+    string primary_tag = 13;
+    repeated string secondary_tag = 14;
+}
+
 message CrawlHistory {
 
 }
 
 message CrawlDoc {
     string  docid = 1;
-    string  url = 2;
+    string  request_url = 2;
+    // url use to crawl. it's generated base on request url
+    string  url = 3;
+    string redirect_url = 4;
+    ReturnType  code    =   5;
+    string  content =   6;
+    bool    content_compressed  =   7;
+    // time the doc fetched
+    int64   timestamp   =   8;
+    repeated OutLink    indomain_outlinks = 9;
+    repeated OutLink    outdomain_outlinks = 10;
+    // content hash(128 bit)
+    int64 chash_0   =   11;
+    int64 chash_1   =   12;
+    // original encoding which is deteched by the page content
+    int32 orig_encoding   = 13;
+    // encoding after convert to utf8
+    // the same with orig_encoding if convert fail
+    // utf8 if convert success
+    int32 conv_encoding =   14;
+    // language the page is detected to
+    int32 language = 15;
+    // content type of the page, eg text/html
+    string content_type = 16;
+    string  header  =   18;
+    int64 time_used = 19;
+    string reservation = 20;
+
+    CrawlParam  crawl_param = 21;
+}
+message CrawlDocs {
+    repeated CrawlDoc docs = 1;
 }
 message CrawlRequest {
-
+    string request = 1;
 }
 message CrawlResponse {
-
+    bool ok = 1;
+    int64   ret = 2;
 }
 service CrawlService {
-    rpc Feed(CrawlDoc) returns (CrawlResponse) {}
+    rpc Feed(CrawlDocs) returns (CrawlResponse) {}
     rpc IsHealthy(CrawlRequest) returns (CrawlResponse) {}
 }
