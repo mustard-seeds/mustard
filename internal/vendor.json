@@ -23,6 +23,16 @@
 			"revisionTime": "2015-08-19T22:12:45-07:00"
 		},
 		{
+			"path": "github.com/gorilla/http",
+			"revision": "5dff1c014197bd33cbefc3ff9de164ada759b81b",
+			"revisionTime": "2015-09-27T04:35:00+08:00"
+		},
+		{
+			"path": "github.com/gorilla/http/client",
+			"revision": "5dff1c014197bd33cbefc3ff9de164ada759b81b",
+			"revisionTime": "2015-09-27T04:35:00+08:00"
+		},
+		{
 			"path": "github.com/gorilla/mux",
 			"revision": "26a6070f849969ba72b72256e9f14cf519751690",
 			"revisionTime": "2015-12-31T08:19:08-08:00"
