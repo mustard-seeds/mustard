@@ -20,5 +20,5 @@ func (doc *StorageHandler)Status() {
 
 // use for create instance from a string
 func init() {
-    registerType((*StorageHandler)(nil),)
+    registerHandlerType(&StorageHandler{})
 }

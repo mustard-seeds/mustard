@@ -15,6 +15,7 @@ type CrawlHandler interface {
     Process(*proto.CrawlDoc)
     Status()
 }
+
 type CrawlProcessor interface {
     GetInputChan() <-chan *proto.CrawlDoc
     GetOutputChan() chan<- *proto.CrawlDoc
@@ -31,6 +32,7 @@ type CrawlHandlerProcessor struct {
     input_chan <-chan *proto.CrawlDoc
     output_chan  chan<- *proto.CrawlDoc
     crawlDoc *proto.CrawlDoc
+    // statistic
     process_num int
     accept_num  int
 }
@@ -53,7 +55,12 @@ func (cp *CrawlHandlerProcessor)PeriodicTask(){
         if cp.output_chan != nil {
             output_chan_size = len(cp.output_chan)
         }
-        LOG.VLog(3).Debugf("[%s]in(%d)-out(%d)",reflect.TypeOf(cp.handler),input_chan_size,output_chan_size)
+        LOG.VLog(3).Debugf("[%s](%d-%d)(%d/%d)",
+                reflect.TypeOf(cp.handler),
+                input_chan_size,
+                output_chan_size,
+                cp.process_num,
+                cp.accept_num)
         cp.handler.Status()
         time.Sleep(time.Second * time.Duration(*CONF.Crawler.PeriodicInterval))
     }
@@ -68,7 +75,7 @@ func (cp *CrawlHandlerProcessor)Run() {
         cp.process_num++
         if cp.handler.Accept(cp.crawlDoc) {
             cp.accept_num++
-            LOG.VLog(3).Debugf("Process One Doc %s ",cp.crawlDoc.Url)
+            LOG.VLog(3).Debugf("[%s]Process One Doc %s ", reflect.TypeOf(cp.handler),cp.crawlDoc.Url)
             cp.handler.Process(cp.crawlDoc)
         }
         cp.Output(cp.crawlDoc)
@@ -86,5 +93,7 @@ func (cp *CrawlHandlerProcessor)SetOutputChan(out chan<-*proto.CrawlDoc) {
 func (cp *CrawlHandlerProcessor)Output(doc *proto.CrawlDoc) {
     if cp.output_chan != nil {
         cp.output_chan <- doc
+    } else {
+        *doc = proto.CrawlDoc{}
     }
 }
