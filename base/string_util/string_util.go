@@ -10,3 +10,6 @@ func Purify(s string, dirty ...string) string {
 	}
 	return n
 }
+func IsEmpty(s string) bool {
+	return s == ""
+}

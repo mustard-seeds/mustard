@@ -54,13 +54,9 @@ func (h *CrawlHandler)PeriodicTask(p CrawlProcessor){
         if h.input_chan != nil {
             input_chan_size = len(h.input_chan)
         }
-        output_chan_size := 0
-        if h.output_chan != nil {
-            output_chan_size = len(h.output_chan)
-        }
-        LOG.VLog(3).Debugf("[%s](%d-%d)(%d/%d)(%d/%d)",
+        LOG.VLog(3).Debugf("[%s](%d)(%d/%d)(%d/%d)",
                 reflect.Indirect(reflect.ValueOf(p)).Type().Name(),
-                input_chan_size, output_chan_size,
+                input_chan_size,
                 h.process_num, h.accept_num,
                 h.avg_process_time, h.max_process_time)
         p.Status()
