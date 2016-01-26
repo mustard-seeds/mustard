@@ -4,21 +4,13 @@ import (
     "reflect"
 )
 
-var CrawlHandlerRegistry = make(map[string]CrawlHandler)
-var CrawlProcessorRegistry = make(map[string]CrawlProcessor)
+var CrawlTaskRegistry = make(map[string]CrawlTask)
 
-func registerHandlerType(handler CrawlHandler) {
-    t := reflect.TypeOf(handler).Elem()
-    CrawlHandlerRegistry[t.Name()] = handler
-}
-func registerProcessorType(processor CrawlProcessor) {
-    t := reflect.TypeOf(processor).Elem()
-    CrawlProcessorRegistry[t.Name()] = processor
+func registerCrawlTaskType(task CrawlTask) {
+    t := reflect.TypeOf(task).Elem()
+    CrawlTaskRegistry[t.Name()] = task
 }
 
-func GetCrawlHandlerByName(name string) CrawlHandler {
-    return CrawlHandlerRegistry[name]
-}
-func GetCrawlProcessorByName(name string) CrawlProcessor {
-    return CrawlProcessorRegistry[name]
+func GetCrawlHandlerByName(name string) CrawlTask {
+    return CrawlTaskRegistry[name]
 }

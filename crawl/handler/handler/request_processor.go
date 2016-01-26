@@ -7,10 +7,10 @@ import (
 )
 
 type RequestProcessor struct {
-    output_chan  chan<- *proto.CrawlDoc
+    CrawlHandler
 }
 
-func (request *RequestProcessor)Run() {
+func (request *RequestProcessor)Run(p CrawlProcessor) {
     for {
         doc := proto.CrawlDoc{Url:"xxxxurl"}
         time.Sleep(time.Second)
@@ -18,30 +18,7 @@ func (request *RequestProcessor)Run() {
         LOG.Info("Send one request")
     }
 }
-func (request *RequestProcessor)Output(doc *proto.CrawlDoc) {
-    if request.output_chan != nil {
-        request.output_chan <- doc
-    }
-}
-
-func (request *RequestProcessor)GetHandler() CrawlHandler {
-    return (CrawlHandler)(nil)
-}
-func (request *RequestProcessor)SetHandler(CrawlHandler) {
-}
-func (request *RequestProcessor)GetInputChan() <-chan *proto.CrawlDoc {
-    return nil
-}
-func (request *RequestProcessor)GetOutputChan() chan<- *proto.CrawlDoc {
-    return request.output_chan
-}
-func (request *RequestProcessor)SetInputChan(in <-chan*proto.CrawlDoc) {
-}
-func (request *RequestProcessor)SetOutputChan(out chan<-*proto.CrawlDoc) {
-    request.output_chan = out
-}
-
 // use for create instance from a string
 func init() {
-    registerProcessorType(&RequestProcessor{})
+    registerCrawlTaskType(&RequestProcessor{})
 }

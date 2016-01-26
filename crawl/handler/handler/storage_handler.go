@@ -6,7 +6,7 @@ import (
 )
 
 type StorageHandler struct {
-
+    CrawlHandler
 }
 func (doc *StorageHandler)Accept(crawlDoc *proto.CrawlDoc)bool {
     return true
@@ -20,5 +20,5 @@ func (doc *StorageHandler)Status() {
 
 // use for create instance from a string
 func init() {
-    registerHandlerType(&StorageHandler{})
+    registerCrawlTaskType(&StorageHandler{})
 }

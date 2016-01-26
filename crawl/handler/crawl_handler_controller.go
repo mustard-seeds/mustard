@@ -10,8 +10,8 @@ import (
 )
 var CONF = conf.Conf
 
-var InputProcessors []handler.CrawlProcessor
-var ProcessChain []handler.CrawlProcessor
+var InputProcessors []handler.CrawlTask
+var ProcessChain []handler.CrawlTask
 
 func InitCrawlService() {
     for _,name := range strings.Split(*CONF.Crawler.CrawlHandlerChain,";") {
@@ -20,9 +20,7 @@ func InitCrawlService() {
         if h == nil {
             LOG.Fatalf("Can not get Crawl Handler %s", name)
         }
-        p := handler.CrawlHandlerProcessor{}
-        p.SetHandler(h)
-        ProcessChain = append(ProcessChain, &p)
+        ProcessChain = append(ProcessChain, h)
     }
     if len(ProcessChain) == 0 {
         LOG.Fatal("Crawl handler Chain not assign")
@@ -31,7 +29,7 @@ func InitCrawlService() {
     // set input handlers
     for _,name := range strings.Split(*CONF.Crawler.CrawlInputHandler,";") {
         LOG.Infof("%s Input Crawl Processor Start", name)
-        r := handler.GetCrawlProcessorByName(name)
+        r := handler.GetCrawlHandlerByName(name)
         if r == nil {
             LOG.Fatalf("Can not get crawl processor %s", name)
         }
@@ -46,11 +44,11 @@ func InitCrawlService() {
     }
     ProcessChain[len(ProcessChain)-1].SetOutputChan(nil)
     for _,p := range ProcessChain {
-        LOG.Infof("%s Start to Run", reflect.TypeOf(p.GetHandler()))
-        go p.Run()
+        LOG.Infof("%s Start to Run", reflect.TypeOf(p))
+        go p.Run(p.(handler.CrawlProcessor))
     }
     for _,r := range InputProcessors {
         LOG.Infof("%s Start to Run", reflect.TypeOf(r))
-        go r.Run()
+        go r.Run(r.(handler.CrawlProcessor))
     }
 }
