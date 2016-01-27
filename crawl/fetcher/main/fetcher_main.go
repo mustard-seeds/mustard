@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	runtime.GOMAXPROCS(1)
+	runtime.GOMAXPROCS(2)
 	c := handler.CrawlHandlerController{}
 	c.InitCrawlService()
 	for {
@@ -15,3 +15,4 @@ func main() {
 		time.Sleep(time.Second*2)
 	}
 }
+

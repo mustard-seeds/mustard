@@ -6,22 +6,22 @@ import (
     LOG "mustard/base/log"
     "mustard/base/conf"
     "mustard/crawl/proto"
+    "mustard/base/string_util"
 )
 
 var CONF = conf.Conf
 
 type CrawlTask interface {
-    PeriodicTask(p CrawlProcessor)
     Run(p CrawlProcessor)
     Output(doc *proto.CrawlDoc)
     SetInputChan(in <-chan*proto.CrawlDoc)
     SetOutputChan(out chan<-*proto.CrawlDoc)
     GetInputChan() <-chan *proto.CrawlDoc
     GetOutputChan() chan<- *proto.CrawlDoc
+    Status(s *string)
 }
 
 type CrawlProcessor interface {
-    Status()
     Process(*proto.CrawlDoc)
     Accept(*proto.CrawlDoc) bool
 }
@@ -39,32 +39,21 @@ type CrawlHandler struct {
 }
 
 // CrawlProcessor interface
-func (h *CrawlHandler)Status(){
+func (h *CrawlHandler)Status(s *string){
+    if h.input_chan != nil {
+        string_util.StringAppendF(s, "(%d-%d/%d-%d/%d)", len(h.input_chan),
+            h.process_num, h.accept_num,
+            h.avg_process_time, h.max_process_time)
+    }
 }
+
 func (h *CrawlHandler)Process(*proto.CrawlDoc) {
 }
 func (h *CrawlHandler)Accept(*proto.CrawlDoc) bool{
     return true
 }
 
-// CrawlTask Interface
-func (h *CrawlHandler)PeriodicTask(p CrawlProcessor){
-    for {
-        input_chan_size := 0
-        if h.input_chan != nil {
-            input_chan_size = len(h.input_chan)
-        }
-        LOG.VLog(3).Debugf("[%s](%d)(%d/%d)(%d/%d)",
-                reflect.Indirect(reflect.ValueOf(p)).Type().Name(),
-                input_chan_size,
-                h.process_num, h.accept_num,
-                h.avg_process_time, h.max_process_time)
-        p.Status()
-        time_util.Sleep(*CONF.Crawler.PeriodicInterval)
-    }
-}
 func (h *CrawlHandler)Run(p CrawlProcessor) {
-    go h.PeriodicTask(p)
     for {
         h.crawlDoc = <- h.input_chan
         h.process_num++
@@ -84,7 +73,6 @@ func (h *CrawlHandler)Run(p CrawlProcessor) {
         h.Output(h.crawlDoc)
     }
 }
-
 func (cp *CrawlHandler)Output(doc *proto.CrawlDoc) {
     if cp.output_chan != nil {
         cp.output_chan <- doc

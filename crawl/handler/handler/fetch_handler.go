@@ -4,6 +4,7 @@ import (
     LOG "mustard/base/log"
     "mustard/crawl/proto"
     "mustard/base/time_util"
+    "mustard/base/string_util"
 )
 
 type FetchHandler struct {
@@ -13,12 +14,17 @@ type FetchHandler struct {
     // statistic
     sitequeuefull_num   int
 }
-func (h *FetchHandler)Status() {
-        LOG.Infof("%d - %d - %d - %d ",
+func (h *FetchHandler)Status(s *string) {
+    h.CrawlHandler.Status(s)
+    if h.hostloader != nil && h.conns != nil {
+        string_util.StringAppendF(s,  "[%d-(%d-%d)-(%d-%d)-%d]",
             len(h.hostloader.hostMap),
-            len(h.conns.busy),
-            len(h.conns.free),
+            h.hostloader.Him(),
+            h.hostloader.Uim(),
+            h.conns.BusyConnectionNum(),
+            h.conns.FreeConnectionNum(),
             len(h.conns.record))
+    }
 }
 func (h *FetchHandler)Init() {
     h.hostloader = &HostLoader{
@@ -33,7 +39,6 @@ func (h *FetchHandler)Init() {
 }
 func (h *FetchHandler)Run(p CrawlProcessor) {
     h.Init()
-    go h.PeriodicTask(p)
     for {
         // non blocking channel
         select {

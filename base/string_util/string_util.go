@@ -1,5 +1,6 @@
 package string_util
 import (
+	"fmt"
 	"strings"
 )
 
@@ -10,6 +11,12 @@ func Purify(s string, dirty ...string) string {
 	}
 	return n
 }
+
 func IsEmpty(s string) bool {
 	return s == ""
+}
+
+func StringAppendF(s *string, format string, a ...interface{}) {
+	app := fmt.Sprintf(format, a...)
+	*s = *s + app
 }

@@ -20,9 +20,6 @@ func (doc *DocHandler)Process(crawlDoc *proto.CrawlDoc) {
         crawlDoc.Url)
     time.Sleep(time.Second * 2)
 }
-func (doc *DocHandler)Status() {
-    LOG.VLog(3).Debug("In DocHandler Status")
-}
 
 // use for create instance from a string
 func init() {
