@@ -13,6 +13,7 @@ type CrawlerType struct {
     FetchConnectionNum  *int
     CrawlRequestPort    *int
     CrawlRequestHealthyRatio *float64
+    CrawlersConfigFile  *string
 }
 
 var CrawlerConf = CrawlerType{
@@ -24,4 +25,5 @@ var CrawlerConf = CrawlerType{
     FetchConnectionNum:flag.Int("fetch_connection_number",10,"url fetch connection number"),
     CrawlRequestPort:flag.Int("crawl_request_port", 9010, "grpc port"),
     CrawlRequestHealthyRatio:flag.Float64("crawl_request_healthy_ratio", 0.9, " healthy raito"),
+    CrawlersConfigFile:flag.String("crawlers_config_file","etc/crawl/crawlers.config", "fetcher config file, ip:port each line"),
 }
