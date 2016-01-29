@@ -55,7 +55,7 @@ func (c *CrawlHandlerController)InitCrawlService() {
     }
 }
 func (c *CrawlHandlerController)PrintStatus() {
-    stat := ""
+    stat := "\n"
     for _,h := range c.ProcessChain {
         string_util.StringAppendF(&stat, "%s:",
             reflect.Indirect(reflect.ValueOf(h)).Type().Name())

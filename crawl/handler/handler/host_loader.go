@@ -47,6 +47,8 @@ func (hlq *HostLoadQueue)Size() int {
     return len(hlq.hosts)
 }
 
+//////////////////////////////////////////////////////////
+
 type HostLoader struct {
     hostMap map[string]*HostLoadQueue
     uim int

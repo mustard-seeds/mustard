@@ -15,6 +15,11 @@ const (
 type Connection struct {
     client  *http.Client
 }
+// http proxy
+// custom header
+// timeout,connection/read
+// follow redirect?
+
 // run in goroutine
 func (c *Connection)FetchOne(doc *proto.CrawlDoc, f func(_doc *proto.CrawlDoc, conn *Connection)) {
     // TODO fetch doc and fill field

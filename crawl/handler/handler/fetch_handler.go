@@ -17,8 +17,7 @@ type FetchHandler struct {
 func (h *FetchHandler)Status(s *string) {
     h.CrawlHandler.Status(s)
     if h.hostloader != nil && h.conns != nil {
-        string_util.StringAppendF(s,  "[%d-(%d-%d)-(%d-%d)-%d]",
-            len(h.hostloader.hostMap),
+        string_util.StringAppendF(s,  "[(%d-%d)-(%d-%d)-%d]",
             h.hostloader.Him(),
             h.hostloader.Uim(),
             h.conns.BusyConnectionNum(),

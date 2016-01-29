@@ -12,7 +12,7 @@ func main() {
 	c.InitCrawlService()
 	for {
 		c.PrintStatus()
-		time.Sleep(time.Second*2)
+		time.Sleep(time.Second*10)
 	}
 }
 
