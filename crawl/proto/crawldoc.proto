@@ -12,7 +12,7 @@ enum ReturnType {
     TOOBIG                  = 6;
     BADHEADER               = 7;
     NETWORKERROR            = 8;
-    SITEQUEUEFULL           = 9;
+    SITEQUEUEFULLFETCHER    = 9;
     INVALIDURL              = 10;
     INVALIDREDIRECTURL      = 11;
     META_REDIRECT           = 12;
@@ -20,6 +20,7 @@ enum ReturnType {
     IP_BLACKLISTED          = 14;
     BADCONTENT              = 15;
     URL_BLACKLISTED         = 16;
+    SITEQUEUEFULLDISPATCHER = 17;
 
     STATUS100 = 100;
     STATUS101 = 101;
