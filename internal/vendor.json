@@ -8,6 +8,11 @@
 			"revisionTime": "2015-09-27T16:28:20-04:00"
 		},
 		{
+			"path": "github.com/PuerkitoBio/purell",
+			"revision": "d69616f51cdfcd7514d6a380847a152dfc2a749d",
+			"revisionTime": "2015-02-18T08:25:10-05:00"
+		},
+		{
 			"path": "github.com/andybalholm/cascadia",
 			"revision": "3ad29d1ad1c4f2023e355603324348cf1f4b2d48",
 			"revisionTime": "2015-07-30T10:44:59-07:00"
@@ -36,6 +41,11 @@
 			"path": "github.com/gorilla/mux",
 			"revision": "26a6070f849969ba72b72256e9f14cf519751690",
 			"revisionTime": "2015-12-31T08:19:08-08:00"
+		},
+		{
+			"path": "github.com/opennota/urlesc",
+			"revision": "5fa9ff0392746aeae1c4b37fcc42c65afa7a9587",
+			"revisionTime": "2015-02-08T15:19:50+07:00"
 		},
 		{
 			"path": "github.com/vharitonsky/iniflags",
