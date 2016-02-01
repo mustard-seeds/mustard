@@ -16,6 +16,7 @@ import (
     "mustard/base/time_util"
     "errors"
     "strconv"
+    "mustard/utils/babysitter"
 )
 var CONF = conf.Conf
 
@@ -23,6 +24,8 @@ const (
     kMaxBatchFeedSize int = 100
     kInvalidCrawlerID uint32 = 65535
     kMagicNumber      uint32 = 113
+    kFeedSpeedInterval int64 = 60
+    kStatusPageColSize int = 8
 )
 // send crawldoc to target server
 // dispatch as:  host/domain/url/random
@@ -157,6 +160,11 @@ type CrawlerFeederGroup struct {
 type Dispatcher struct {
     feeders *CrawlerFeederGroup
     sync.RWMutex
+    // statistic
+    last_counter_time int64
+    input_speed int64
+    input_counter int64
+    start_time_str string
 }
 func (d *Dispatcher)SelectCrawler(doc *pb.CrawlDoc) uint32{
     if (len(d.feeders.liveFeeders) == 0) {
@@ -234,6 +242,7 @@ func (d *Dispatcher)Feed(ctx context.Context, docs *pb.CrawlDocs) (*pb.CrawlResp
             }
         }
     }
+    d.input_counter += int64(len(docs.Docs))
     LOG.VLog(3).Debugf("Feed using time %d ms for %d records.",(time_util.GetTimeInMs() - t1),len(docs.Docs))
     return &pb.CrawlResponse{Ok:true},nil
 }
@@ -263,6 +272,7 @@ func (d *Dispatcher)Init() {
     d.LoadCrawlersFromFile(*CONF.Crawler.CrawlersConfigFile)
     go d.CrawlFeederLoop()
     // start rpc service at dispatcher_main
+    d.start_time_str = "NOW"
 }
 func (d *Dispatcher)CrawlFeederLoop() {
     for (true) {
@@ -289,4 +299,88 @@ func (d *Dispatcher)LoadCrawlersFromFile(name string) {
             port:addrPort,
         }
     }
+}
+func (d *Dispatcher)MonitorReport(result *babysitter.MonitorResult) {
+    var info string
+    var process_urls,pending_urls,queuefull_urls int
+    var interval = time_util.GetCurrentTimeStamp() - d.last_counter_time
+    if (interval >= kFeedSpeedInterval) {
+        d.input_speed = d.input_counter / interval
+        LOG.VLog(3).Debugf("InputCounter:%d,interval:%d,Speed:%d",d.input_counter,interval,d.input_speed)
+        d.input_counter = 0
+        d.last_counter_time  = time_util.GetCurrentTimeStamp()
+    }
+    string_util.StringAppendF(&info, "InputSpeed: %d/sec<br>", d.input_speed)
+    td_list := []string{}
+    for k,_ := range d.feeders.liveFeeders {
+        var tds string
+        d.fillTDString(d.feeders.feeders[k], true, &tds)
+        process_urls += d.feeders.feeders[k].process_urls
+        pending_urls += d.feeders.feeders[k].PendingUrls()
+        queuefull_urls += d.feeders.feeders[k].queuefull_urls
+        td_list = append(td_list, tds)
+    }
+    for k,_ := range d.feeders.deadFeeders {
+        var tds string
+        d.fillTDString(d.feeders.feeders[k], false, &tds)
+        process_urls += d.feeders.feeders[k].process_urls
+        pending_urls += d.feeders.feeders[k].PendingUrls()
+        queuefull_urls += d.feeders.feeders[k].queuefull_urls
+        td_list = append(td_list, tds)
+    }
+    string_util.StringAppendF(&info,
+        "<style type=\"text/css\">"+
+        " table {font-size: 80%%;}"+
+        "</style>"+
+        "<b> Crawler Dispatcher Summary (start at %s) </b><pre>"+
+        "<key>Live feeders  </key>&nbsp;&nbsp;:&nbsp;&nbsp;<value>%d</value><br>"+
+        "<key>Dead feeders  </key>&nbsp;&nbsp;:&nbsp;&nbsp;<value>%d</value><br>"+
+        "<key>Processed Urls</key>&nbsp;&nbsp;:&nbsp;&nbsp;<value>%d</value><br>"+
+        "<key>Pending Urls  </key>&nbsp;&nbsp;:&nbsp;&nbsp;<value>%d</value><br>"+
+        "<key>QueueFull Urls</key>&nbsp;&nbsp;:&nbsp;&nbsp;<value>%d</value><br>"+
+        "</pre>",
+        //d.start_time_str,
+        time_util.GetTimeInMs(),
+        len(d.feeders.liveFeeders),
+        len(d.feeders.deadFeeders),
+        process_urls,
+        pending_urls,
+        queuefull_urls)
+    info += "<table border=1>"
+    for i:=0;i < len(td_list);i++ {
+        info += "<tr>"
+        j := 0
+        for ;i< kStatusPageColSize;j++ {
+            if (i + j == len(td_list)) {
+                break
+            }
+            info += td_list[i+j]
+        }
+        info += "</tr>"
+        i += j - 1
+    }
+    info += "</table>";
+    result.AddString(info)
+}
+func (d *Dispatcher)fillTDString(feeder *CrawlerFeeder, alive bool, tds *string) {
+    var status string
+    if alive {
+        status = "<font color=green><em>live</em></font>"
+    } else {
+        status = "<font color=red><em>dead</em></font>";
+    }
+    string_util.StringAppendF(tds,
+        "<td><div><a href=http://%s:%d/statusi>%s:%d</a>%s<pre>" +
+        "<key>Processed Url </key>&nbsp;&nbsp;:&nbsp;&nbsp;<value>%d</value><br>" +
+        "<key>Pending   Urls</key>&nbsp;&nbsp;:&nbsp;&nbsp;<value>%d</value><br>" +
+        "<key>QueueFull Urls</key>&nbsp;&nbsp;:&nbsp;&nbsp;<value>%d</value><br>" +
+        "</pre></div></td>",
+        feeder.host,
+        feeder.port,
+        feeder.host,
+        feeder.port,
+        status,
+        feeder.process_urls,
+        feeder.PendingUrls(),
+        feeder.queuefull_urls)
 }

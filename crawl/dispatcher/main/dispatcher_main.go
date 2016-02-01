@@ -9,6 +9,7 @@ import (
 	"mustard/base/conf"
 	pb "mustard/crawl/proto"
 	"mustard/internal/google.golang.org/grpc"
+	"mustard/utils/babysitter"
 )
 var CONF = conf.Conf
 
@@ -31,6 +32,11 @@ func main() {
 
 	disp := new(dispatcher.Dispatcher)
 	disp.Init()
+
+	var http_server babysitter.MonitorServer
+	http_server.Init()
+	http_server.AddMonitor(disp)
+	go http_server.Serve(*CONF.Crawler.HttpPort)
 
 	pb.RegisterCrawlServiceServer(grpcServer, disp)
 	grpcServer.Serve(lis)

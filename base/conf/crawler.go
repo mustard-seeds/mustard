@@ -21,6 +21,7 @@ type CrawlerType struct {
     DispatchAs          *string
     DispatchLiveFeederRatio *float64
     DispatchFlushInterval  *int
+    HttpPort            *int
 }
 
 var CrawlerConf = CrawlerType{
@@ -40,4 +41,5 @@ var CrawlerConf = CrawlerType{
     DispatchAs:flag.String("dispatch_as","host","host or url, dispatch as"),
     DispatchLiveFeederRatio:flag.Float64("live_feeder_ratio", 0, "dispatcher live feeder ratio"),
     DispatchFlushInterval:flag.Int("dispatch_flush_interval", 10,"dispatch flush interval"),
+    HttpPort:flag.Int("http_port",9900,"http port"),
 }
