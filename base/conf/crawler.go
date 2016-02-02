@@ -14,6 +14,11 @@ type CrawlerType struct {
     CrawlRequestPort    *int
     CrawlRequestHealthyRatio *float64
     CrawlersConfigFile  *string
+    DefaultHostLoad     *int
+    HostLoadConfigFile  *string
+    ReceiversConfigFile  *string
+    MultiFetcherConfigFile  *string
+    FakeHostConfigFile  *string
     FeederMaxPending    *int
     GroupFeederMaxPending    *int
     DispatcherHost      *string
@@ -23,6 +28,7 @@ type CrawlerType struct {
     DispatchFlushInterval  *int
     HttpPort            *int
     ConnectionTimeout   *int
+    ConfigFileReloadInterval *int
 }
 
 var CrawlerConf = CrawlerType{
@@ -34,7 +40,11 @@ var CrawlerConf = CrawlerType{
     FetchConnectionNum:flag.Int("fetch_connection_number",10,"url fetch connection number"),
     CrawlRequestPort:flag.Int("crawl_request_port", 9010, "grpc port"),
     CrawlRequestHealthyRatio:flag.Float64("crawl_request_healthy_ratio", 0.9, " healthy raito"),
-    CrawlersConfigFile:flag.String("crawlers_config_file","/Users/glc/workspace/code/src/mustard/mdata/etc/crawl/crawlers.config", "fetcher config file, ip:port each line"),
+    CrawlersConfigFile:flag.String("crawlers_config_file","etc/crawl/crawlers.config", "fetcher config file, ip:port each line"),
+    HostLoadConfigFile:flag.String("hostload_config_file", "etc/crawl/hostload.config", "hostload config file"),
+    ReceiversConfigFile:flag.String("receivers_config_file", "etc/crawl/receivers.config", "receivers config file"),
+    MultiFetcherConfigFile:flag.String("multifetcher_config_file", "etc/crawl/multifetcher.config", "multi fetcher config file"),
+    FakeHostConfigFile:flag.String("fakehost_config_file", "etc/crawl/fakehost.config", "multi fetcher config file"),
     FeederMaxPending:flag.Int("feeder_max_pendings",100,"feeder max pending for dispatcher"),
     GroupFeederMaxPending:flag.Int("group_feeder_max_pendings",5000,"feeder max pending for dispatcher"),
     DispatcherHost:flag.String("dispatcher_host","127.0.0.1","dispatcher host"),
@@ -44,4 +54,6 @@ var CrawlerConf = CrawlerType{
     DispatchFlushInterval:flag.Int("dispatch_flush_interval", 10,"dispatch flush interval"),
     HttpPort:flag.Int("http_port",9900,"http port"),
     ConnectionTimeout:flag.Int("connection_timeout",2,"connection timeout"),
+    DefaultHostLoad:flag.Int("default_hostload",5,"default host load"),
+    ConfigFileReloadInterval:flag.Int("config_file_reload_interval",1800, "config file reload interval"),
 }

@@ -288,14 +288,8 @@ func (d *Dispatcher)CrawlFeederLoop() {
 }
 
 func (d *Dispatcher)LoadCrawlersFromFile(name string) {
-    base.CHECK(file.Exist(name))
-    content,_ := file.ReadFileToString(name)
-    lines := strings.Split(content, "\n")
-    for _,l := range lines {
-        if l == "" || strings.HasPrefix(l, "#") {
-            continue
-        }
-        addr :=strings.Split(l,":")
+    file.FileLineReader(name,"#",func(line string){
+        addr :=strings.Split(line,":")
         base.CHECK(len(addr) == 2)
         addrPort,err := strconv.Atoi(addr[1])
         base.CHECK(err == nil)
@@ -304,7 +298,7 @@ func (d *Dispatcher)LoadCrawlersFromFile(name string) {
             port:addrPort,
             connected:false,
         }
-    }
+    })
 }
 func (d *Dispatcher)MonitorReport(result *babysitter.MonitorResult) {
     var info string

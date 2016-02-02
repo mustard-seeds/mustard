@@ -3,7 +3,9 @@ package file
 import (
 	"os"
 	"io/ioutil"
+	"strings"
 //	LOG "mustard/base/log"
+	"mustard/base"
 )
 
 func ReadFileToString(name string) (string, error) {
@@ -20,3 +22,14 @@ func FileExist(name string) bool {
 	return !os.IsNotExist(err) && (!(s != nil && s.IsDir()))
 }
 
+func FileLineReader(filename string, comment string, f func(line string)) {
+	base.CHECK(Exist(filename))
+	content,_ := ReadFileToString(filename)
+	lines := strings.Split(content,"\n")
+	for _,l := range lines {
+		if strings.TrimSpace(l) == "" || strings.HasPrefix(l, "#") {
+			continue
+		}
+		f(l)
+	}
+}

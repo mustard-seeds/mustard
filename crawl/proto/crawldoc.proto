@@ -111,8 +111,7 @@ message CrawlParam {
     bool    random_hostload =   3;
     int32   fetcher_count   =   4;  // for multi fetcher, default should set 1
     bool    drop_content    =   5;
-    DocType dtype           =   6;
-    string  store_path      =   7;
+    string  store_engine    =   7;
     string  store_db        =   8;
     string  store_table     =   9;
     string  fake_host       =   10;
@@ -124,7 +123,7 @@ message CrawlParam {
 }
 
 message CrawlHistory {
-
+    // TODO.
 }
 
 message CrawlDoc {
@@ -156,9 +155,10 @@ message CrawlDoc {
     string  header  =   18;
     int64 time_used = 19;
     string reservation = 20;
+    DocType dtype           =   21;
 
-    CrawlParam  crawl_param = 21;
-    CrawlRecord crawl_record = 22;
+    CrawlParam  crawl_param = 50;
+    CrawlRecord crawl_record = 60;
 }
 message CrawlDocs {
     repeated CrawlDoc docs = 1;

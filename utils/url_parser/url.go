@@ -7,13 +7,20 @@ import (
 )
 
 func GetHost(_url string) string {
+	u := GetURLObj(_url)
+	if u == nil {
+		return nil
+	}
+	return u.Host
+}
+func GetURLObj(_url string) *url.URL {
 	var u *url.URL
 	var e error
 	if u, e = url.Parse(_url); e != nil {
 		LOG.Error("Parse Url Fail")
 		return nil
 	}
-	return u.Host
+	return u
 }
 func NormalizeUrl(_url string) string {
 	normal_url, err := purell.NormalizeURLString(_url, purell.FlagsSafe)
