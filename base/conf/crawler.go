@@ -22,6 +22,7 @@ type CrawlerType struct {
     DispatchLiveFeederRatio *float64
     DispatchFlushInterval  *int
     HttpPort            *int
+    ConnectionTimeout   *int
 }
 
 var CrawlerConf = CrawlerType{
@@ -42,4 +43,5 @@ var CrawlerConf = CrawlerType{
     DispatchLiveFeederRatio:flag.Float64("live_feeder_ratio", 0, "dispatcher live feeder ratio"),
     DispatchFlushInterval:flag.Int("dispatch_flush_interval", 10,"dispatch flush interval"),
     HttpPort:flag.Int("http_port",9900,"http port"),
+    ConnectionTimeout:flag.Int("connection_timeout",2,"connection timeout"),
 }

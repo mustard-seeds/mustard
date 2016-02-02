@@ -17,6 +17,7 @@ import (
     "errors"
     "strconv"
     "mustard/utils/babysitter"
+    "time"
 )
 var CONF = conf.Conf
 
@@ -121,15 +122,19 @@ func (cf *CrawlerFeeder)Connect() bool {
         } else {
             opts = append(opts, grpc.WithInsecure())
         }
+        opts = append(opts,grpc.WithTimeout(time.Second*time.Duration(*CONF.Crawler.ConnectionTimeout)))
+        opts = append(opts,grpc.WithBlock()) // grpc should with block...
         var serverAddr string
-        string_util.StringAppendF(&serverAddr,"%s:%d",*CONF.Crawler.DispatcherHost,*CONF.Crawler.DispatcherPort)
+        string_util.StringAppendF(&serverAddr,"%s:%d",cf.host,cf.port)
         conn,err := grpc.Dial(serverAddr, opts...)
         if err != nil {
-            LOG.Errorf("fail to dial: %v", err)
-            conn.Close()
+            LOG.Errorf("fail to dial %s: %v",serverAddr, err)
+            cf.connected = false
+        } else {
+            LOG.Infof("Connect Feeder %s",serverAddr)
+            cf.client = pb.NewCrawlServiceClient(conn)
+            cf.connected = true
         }
-        cf.client = pb.NewCrawlServiceClient(conn)
-        cf.connected = true
     }
     return cf.connected
 }
@@ -272,7 +277,7 @@ func (d *Dispatcher)Init() {
     d.LoadCrawlersFromFile(*CONF.Crawler.CrawlersConfigFile)
     go d.CrawlFeederLoop()
     // start rpc service at dispatcher_main
-    d.start_time_str = "NOW"
+    d.start_time_str = time_util.GetReadableTimeNow()
 }
 func (d *Dispatcher)CrawlFeederLoop() {
     for (true) {
@@ -297,6 +302,7 @@ func (d *Dispatcher)LoadCrawlersFromFile(name string) {
         d.feeders.feeders[uint32(len(d.feeders.feeders))] = &CrawlerFeeder{
             host:addr[0],
             port:addrPort,
+            connected:false,
         }
     }
 }
@@ -339,8 +345,7 @@ func (d *Dispatcher)MonitorReport(result *babysitter.MonitorResult) {
         "<key>Pending Urls  </key>&nbsp;&nbsp;:&nbsp;&nbsp;<value>%d</value><br>"+
         "<key>QueueFull Urls</key>&nbsp;&nbsp;:&nbsp;&nbsp;<value>%d</value><br>"+
         "</pre>",
-        //d.start_time_str,
-        time_util.GetTimeInMs(),
+        d.start_time_str,
         len(d.feeders.liveFeeders),
         len(d.feeders.deadFeeders),
         process_urls,
