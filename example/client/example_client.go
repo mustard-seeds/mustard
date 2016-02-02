@@ -9,11 +9,13 @@ import (
     "fmt"
     "mustard/base/proto_util"
     "mustard/internal/google.golang.org/grpc/credentials"
+    "time"
 )
 
 var CONF = conf.Conf
 
 func general(client pb.GreetingServiceClient) {
+
     greet, err := client.Greeting(context.Background(), new(pb.GreetRequest))
     if err != nil {
         LOG.Fatal("%v.GetFeatures(_) = _, %v: ", client, err)
@@ -58,6 +60,8 @@ func main() {
     } else {
         opts = append(opts, grpc.WithInsecure())
     }
+    opts = append(opts,grpc.WithTimeout(time.Second*2))
+    opts = append(opts,grpc.WithBlock())
     serverAddr := fmt.Sprintf("127.0.0.1:%d", *CONF.Example.Port)
     conn, err := grpc.Dial(serverAddr, opts...)
     if err != nil {
