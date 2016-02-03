@@ -29,6 +29,9 @@ type CrawlerType struct {
     HttpPort            *int
     ConnectionTimeout   *int
     ConfigFileReloadInterval *int
+    // scheduler
+    UrlScheduleFile     *string
+    DefaultSendSpeed    *int
 }
 
 var CrawlerConf = CrawlerType{
@@ -56,4 +59,6 @@ var CrawlerConf = CrawlerType{
     ConnectionTimeout:flag.Int("connection_timeout",2,"connection timeout"),
     DefaultHostLoad:flag.Int("default_hostload",5,"default host load"),
     ConfigFileReloadInterval:flag.Int("config_file_reload_interval",1800, "config file reload interval"),
+    UrlScheduleFile:flag.String("schedule_file","","each line is a url"),
+    DefaultSendSpeed:flag.Int("default_send_speed",5,"default send speed for crawldocsender"),
 }

@@ -16,6 +16,8 @@ type ConfType struct {
     CaFile  *string  // client
     ServerHostOverride  *string // client
 
+    ConfPathPrefix *string
+
     Example     ExampleType
     Crawler     CrawlerType
 }
@@ -29,6 +31,8 @@ var _conf = ConfType{
     KeyFile     :   flag.String("key_file", "", "TLS key file"),
     CaFile      :   flag.String("ca_file", "","The file containning the CA root cert file"),
     ServerHostOverride: flag.String("server_host_override","x.a.com", "The server name use to verify the hostname returned by TLS handshake"),
+
+    ConfPathPrefix:flag.String("conf_path_prefix", "/Application/mustard", "conf common prefix"),
 
     Example     :       ExampleConf,
     Crawler     :       CrawlerConf,

@@ -67,7 +67,7 @@ func (h *FetchHandler)Run(p CrawlProcessor) {
 }
 
 func (h *FetchHandler)processSiteQueueFul(doc *proto.CrawlDoc) {
-    doc.Code = proto.ReturnType_SITEQUEUEFULL
+    doc.Code = proto.ReturnType_SITEQUEUEFULLFETCHER
 }
 
 

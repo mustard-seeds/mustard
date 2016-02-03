@@ -6,7 +6,11 @@ import (
 	"strings"
 //	LOG "mustard/base/log"
 	"mustard/base"
+	"path/filepath"
+	"fmt"
+	"mustard/base/conf"
 )
+var CONF = conf.Conf
 
 func ReadFileToString(name string) (string, error) {
 	content, err := ioutil.ReadFile(name)
@@ -32,4 +36,11 @@ func FileLineReader(filename string, comment string, f func(line string)) {
 		}
 		f(l)
 	}
+}
+
+func GetConfFile(s string) string {
+	if filepath.IsAbs(s) {
+		return s
+	}
+	return fmt.Sprintf("%s/mdata/%s", *CONF.ConfPathPrefix, s)
 }

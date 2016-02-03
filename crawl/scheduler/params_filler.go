@@ -1,16 +1,14 @@
 package scheduler
 import (
-    "strings"
     "strconv"
     pb "mustard/crawl/proto"
     "mustard/base"
     "mustard/base/conf"
-    "mustard/base/file"
-    "mustard/base/time_util"
     LOG "mustard/base/log"
     "mustard/utils/url_parser"
     "regexp"
     crawl_base "mustard/crawl/base"
+    "mustard/base/file"
 )
 var CONF = conf.Conf
 /*
@@ -46,7 +44,7 @@ var NormalJobD = JobDescription{
 
 var UrgentJobD = JobDescription{
     isUrgent:true,
-    primeTag:"n",
+    primeTag:"U",
     randomHostLoad:0,
     dropContent:false,
     requestType:1,
@@ -125,7 +123,8 @@ type FakeHostParamFiller struct {
     last_load_time  int64
 }
 func (f *FakeHostParamFiller)loadFakeHostConfigFile() {
-    result,fresh := crawl_base.LoadConfigWithTwoField("FakeHost", *CONF.Crawler.FakeHostConfigFile, ",")
+    fname := file.GetConfFile(*CONF.Crawler.FakeHostConfigFile)
+    result,fresh := crawl_base.LoadConfigWithTwoField("FakeHost", fname, ",")
     if fresh {
         for k, v := range result {
             f.fakehost[k] = v
@@ -133,8 +132,8 @@ func (f *FakeHostParamFiller)loadFakeHostConfigFile() {
         }
     }
 }
-
 func (f *FakeHostParamFiller)Init() {
+    f.fakehost = make(map[string]string)
     f.loadFakeHostConfigFile()
 }
 func (f *FakeHostParamFiller)Fill(jd *JobDescription, doc *pb.CrawlDoc) {
@@ -153,12 +152,13 @@ type HostLoadParamFiller struct {
     last_load_time  int64
 }
 func (h *HostLoadParamFiller)loadHostloadConfigFile() {
-    result,fresh := crawl_base.LoadConfigWithTwoField("HostLoad", *CONF.Crawler.HostLoadConfigFile, ",")
+    fname := file.GetConfFile(*CONF.Crawler.HostLoadConfigFile)
+    result,fresh := crawl_base.LoadConfigWithTwoField("HostLoad", fname, ",")
     if fresh {
         for k,v := range result {
             hl,err := strconv.Atoi(v)
             if err != nil {
-                LOG.Errorf("Load Config Atoi Error, %s %s:%s", *CONF.Crawler.HostLoadConfigFile, k,v)
+                LOG.Errorf("Load Config Atoi Error, %s %s:%s", fname, k,v)
                 return
             }
             h.hostload[k] = hl
@@ -178,7 +178,7 @@ func (h *HostLoadParamFiller)Fill(jd *JobDescription, doc *pb.CrawlDoc) {
     if present {
         hl = thl
     }
-    doc.CrawlParam.Hostload = hl
+    doc.CrawlParam.Hostload = int32(hl)
 }
 
 type MultiFetcherParamFiller struct {
@@ -186,12 +186,13 @@ type MultiFetcherParamFiller struct {
     last_load_time  int64
 }
 func (f *MultiFetcherParamFiller)loadMultiFetcherConfigFile() {
-    result,fresh := crawl_base.LoadConfigWithTwoField("HostLoad", *CONF.Crawler.MultiFetcherConfigFile, ",")
+    fname := file.GetConfFile(*CONF.Crawler.MultiFetcherConfigFile)
+    result,fresh := crawl_base.LoadConfigWithTwoField("HostLoad", fname, ",")
     if fresh {
         for k,v := range result {
             hl,err := strconv.Atoi(v)
             if err != nil {
-                LOG.Errorf("Load Config Atoi Error, %s %s:%s", *CONF.Crawler.MultiFetcherConfigFile, k,v)
+                LOG.Errorf("Load Config Atoi Error, %s %s:%s", fname, k,v)
                 return
             }
             f.multifetcher[k] = hl
@@ -200,6 +201,7 @@ func (f *MultiFetcherParamFiller)loadMultiFetcherConfigFile() {
     }
 }
 func (f *MultiFetcherParamFiller)Init() {
+    f.multifetcher = make(map[string]int)
     f.loadMultiFetcherConfigFile()
 }
 func (f *MultiFetcherParamFiller)Fill(jd *JobDescription, doc *pb.CrawlDoc) {
@@ -210,42 +212,44 @@ func (f *MultiFetcherParamFiller)Fill(jd *JobDescription, doc *pb.CrawlDoc) {
     if present {
         mf = thl
     }
-    doc.CrawlParam.FetcherCount = mf
+    doc.CrawlParam.FetcherCount = int32(mf)
 }
 
 type ReceiverParamFiller struct {
-    receivers []pb.ConnectionInfo
+    receivers map[string]*pb.ConnectionInfo
     last_load_time int64
 }
 func (f *ReceiverParamFiller)loadReceiverConfigFile() {
-    result,fresh := crawl_base.LoadConfigWithTwoField("HostLoad", *CONF.Crawler.ReceiversConfigFile, ":")
+    fname := file.GetConfFile(*CONF.Crawler.ReceiversConfigFile)
+    result,fresh := crawl_base.LoadConfigWithTwoField("HostLoad", fname, ":")
     if fresh {
         for k,v := range result {
             hl,err := strconv.Atoi(v)
             if err != nil {
-                LOG.Errorf("Load Config Atoi Error, %s %s:%s", *CONF.Crawler.MultiFetcherConfigFile, k,v)
+                LOG.Errorf("Load Config Atoi Error, %s %s:%s", fname, k,v)
                 return
             }
-            f.receivers = append(f.receivers, &pb.ConnectionInfo{Host:k,Port:int32(hl)})
+            f.receivers[k+":"+v] = &pb.ConnectionInfo{Host:k,Port:int32(hl)}
             LOG.VLog(3).Debugf("Load receivers %s : %d", k, hl)
         }
     }
 }
 func (f *ReceiverParamFiller)Init() {
+    f.receivers = make(map[string]*pb.ConnectionInfo)
     f.loadReceiverConfigFile()
 }
 func (f *ReceiverParamFiller)Fill(jd *JobDescription, doc *pb.CrawlDoc) {
     f.loadReceiverConfigFile()
     for _,v := range f.receivers {
-        doc.CrawlParam.Receivers = append(doc.CrawlParam.Receivers, &v)
+        doc.CrawlParam.Receivers = append(doc.CrawlParam.Receivers, v)
     }
 }
 
 type TagParamFiller struct {
 }
-func (hlpf *TagParamFiller)Init() {
+func (h *TagParamFiller)Init() {
 }
-func (hlpf *TagParamFiller)Fill(jd *JobDescription, doc *pb.CrawlDoc) {
+func (h *TagParamFiller)Fill(jd *JobDescription, doc *pb.CrawlDoc) {
     doc.CrawlParam.Pri = pb.Priority_NORMAL
     if jd.isUrgent {
         doc.CrawlParam.Pri = pb.Priority_URGENT
@@ -254,7 +258,7 @@ func (hlpf *TagParamFiller)Fill(jd *JobDescription, doc *pb.CrawlDoc) {
     for _,v := range jd.secondTag {
         doc.CrawlParam.SecondaryTag = append(doc.CrawlParam.SecondaryTag,v)
     }
-    doc.CrawlParam.RandomHostload = jd.randomHostLoad
+    doc.CrawlParam.RandomHostload = int32(jd.randomHostLoad)
     doc.CrawlParam.DropContent = jd.dropContent
     doc.CrawlParam.Rtype = pb.RequestType(jd.requestType)
     // storage

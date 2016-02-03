@@ -103,12 +103,13 @@ message FetchHint {
     string post_data = 5;
 }
 message CrawlRecord {
-    ConnectionInfo fetcher = 1;
+    int64   request_time    = 1;
+    ConnectionInfo fetcher  = 2;
 }
 message CrawlParam {
     Priority    pri         =   1;
     int32   hostload        =   2;
-    bool    random_hostload =   3;
+    int32    random_hostload =   3;
     int32   fetcher_count   =   4;  // for multi fetcher, default should set 1
     bool    drop_content    =   5;
     string  store_engine    =   7;

@@ -20,3 +20,6 @@ func GetReadableTime(ts int64) string{
 func Sleep(s int) {
     time.Sleep(time.Second * time.Duration(s))
 }
+func Usleep(n int) {
+    time.Sleep(time.Microsecond * time.Duration(n))
+}

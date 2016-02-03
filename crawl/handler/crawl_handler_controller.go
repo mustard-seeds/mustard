@@ -8,12 +8,25 @@ import (
     "mustard/crawl/handler/handler"
     "reflect"
     "mustard/base/string_util"
+    "mustard/utils/babysitter"
 )
+
 var CONF = conf.Conf
 
 type CrawlHandlerController struct {
      InputProcessors []handler.CrawlTask
      ProcessChain []handler.CrawlTask
+}
+func (c *CrawlHandlerController)MonitorReport(result *babysitter.MonitorResult) {
+    // TODO add logic for handler babysitter
+    stat := "\n"
+    for _,h := range c.ProcessChain {
+        string_util.StringAppendF(&stat, "%s:",
+            reflect.Indirect(reflect.ValueOf(h)).Type().Name())
+        h.Status(&stat)
+        string_util.StringAppendF(&stat, "   ")
+    }
+    result.AddString(stat)
 }
 func (c *CrawlHandlerController)InitCrawlService() {
     for _,name := range strings.Split(*CONF.Crawler.CrawlHandlerChain,";") {

@@ -274,7 +274,8 @@ func (d *Dispatcher)Init() {
         deadFeeders:make(map[uint32]bool),
         feeders:make(map[uint32]*CrawlerFeeder),
     }
-    d.LoadCrawlersFromFile(*CONF.Crawler.CrawlersConfigFile)
+    fname := file.GetConfFile(*CONF.Crawler.CrawlersConfigFile)
+    d.LoadCrawlersFromFile(fname)
     go d.CrawlFeederLoop()
     // start rpc service at dispatcher_main
     d.start_time_str = time_util.GetReadableTimeNow()

@@ -9,7 +9,7 @@ import (
 func GetHost(_url string) string {
 	u := GetURLObj(_url)
 	if u == nil {
-		return nil
+		return ""
 	}
 	return u.Host
 }
@@ -23,9 +23,9 @@ func GetURLObj(_url string) *url.URL {
 	return u
 }
 func NormalizeUrl(_url string) string {
-	normal_url, err := purell.NormalizeURLString(_url, purell.FlagsSafe)
+	normal_url, err := purell.NormalizeURLString(_url, purell.FlagsUsuallySafeGreedy|purell.FlagRemoveFragment)
 	if err != nil {
-		return nil
+		return ""
 	}
 	return normal_url
 }
