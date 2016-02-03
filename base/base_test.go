@@ -4,5 +4,5 @@ import (
 )
 
 func TestCheck(t *testing.T) {
-	CHECK(true)
+	CHECK(true, "")
 }

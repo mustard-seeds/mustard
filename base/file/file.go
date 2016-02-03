@@ -27,7 +27,7 @@ func FileExist(name string) bool {
 }
 
 func FileLineReader(filename string, comment string, f func(line string)) {
-	base.CHECK(Exist(filename))
+	base.CHECK(Exist(filename), "File %s Not Exist.",filename)
 	content,_ := ReadFileToString(filename)
 	lines := strings.Split(content,"\n")
 	for _,l := range lines {
@@ -41,6 +41,10 @@ func FileLineReader(filename string, comment string, f func(line string)) {
 func GetConfFile(s string) string {
 	if filepath.IsAbs(s) {
 		return s
+	}
+	cpp := *CONF.ConfPathPrefix
+	if strings.HasSuffix(cpp, "mdata") || strings.HasSuffix(cpp, "mdata/") {
+		return fmt.Sprintf("%s/%s", *CONF.ConfPathPrefix, s)
 	}
 	return fmt.Sprintf("%s/mdata/%s", *CONF.ConfPathPrefix, s)
 }

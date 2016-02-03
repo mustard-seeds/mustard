@@ -131,9 +131,9 @@ func (cf *CrawlerFeeder)Connect() bool {
             LOG.Errorf("fail to dial %s: %v",serverAddr, err)
             cf.connected = false
         } else {
-            LOG.Infof("Connect Feeder %s",serverAddr)
             cf.client = pb.NewCrawlServiceClient(conn)
             cf.connected = true
+            LOG.Infof("Connect Feeder %s",serverAddr)
         }
     }
     return cf.connected
@@ -141,6 +141,7 @@ func (cf *CrawlerFeeder)Connect() bool {
 
 func (cf *CrawlerFeeder)IsHealthy() bool{
     if (cf.Connect()) {
+        // TODO, if dispatcher call itself, will deadlock
         response,err := cf.client.IsHealthy(context.Background(),&pb.CrawlRequest{Request:"Dispatch"})
         if (err != nil) {
             cf.connected = false
@@ -291,9 +292,10 @@ func (d *Dispatcher)CrawlFeederLoop() {
 func (d *Dispatcher)LoadCrawlersFromFile(name string) {
     file.FileLineReader(name,"#",func(line string){
         addr :=strings.Split(line,":")
-        base.CHECK(len(addr) == 2)
+        base.CHECK(len(addr) == 2, "Parse Addr Fail. %s", line)
         addrPort,err := strconv.Atoi(addr[1])
-        base.CHECK(err == nil)
+        base.CHECK(addrPort != *CONF.Crawler.DispatcherPort, "Dispatch itself, %s:%d",addr[0],addrPort)
+        base.CHECK(err == nil,"atoi error %s", err)
         d.feeders.feeders[uint32(len(d.feeders.feeders))] = &CrawlerFeeder{
             host:addr[0],
             port:addrPort,

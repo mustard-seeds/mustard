@@ -1,8 +1,11 @@
 package base
-import "errors"
+import (
+	"errors"
+	"fmt"
+)
 
-func CHECK(good bool) {
+func CHECK(good bool, format string, v ...interface{}) {
 	if !good {
-		panic(errors.New("CHECK fail!"))
+		panic(errors.New(fmt.Sprintf("CHECK Fail! " + format, v...)))
 	}
 }

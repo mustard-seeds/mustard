@@ -89,9 +89,9 @@ func (m *MonitorServer)Serve(port int) {
 		LOG.Infof("MonitorServer Serve path %s", k)
 	}
 	serverAddr := fmt.Sprintf(":%d", port)
+	LOG.Infof("Starting Http Monitor at %d", port)
 	err := http.ListenAndServe(serverAddr, r)
 	if (err != nil) {
 		LOG.Fatalf("Http Server Start Fail,%d",port)
 	}
-	LOG.Info("Starting Http Monitor at %d", port)
 }

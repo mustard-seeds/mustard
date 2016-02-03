@@ -104,7 +104,7 @@ type PrepareParamFiller struct {
 func (p *PrepareParamFiller)Init() {
 }
 func (p *PrepareParamFiller)Fill(jd *JobDescription, doc *pb.CrawlDoc) {
-    base.CHECK(doc.RequestUrl != "")
+    base.CHECK(doc.RequestUrl != "", "Doc Request url not filled")
     // normalize request_url, fill url,host,path ...
     if doc.GetCrawlParam() == nil {
         doc.CrawlParam = &pb.CrawlParam{}
