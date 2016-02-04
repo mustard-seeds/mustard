@@ -7,6 +7,7 @@ import (
     LOG "mustard/base/log"
     "mustard/crawl/proto"
     "mustard/base/string_util"
+    "fmt"
 )
 
 var CONF = conf.Conf
@@ -40,11 +41,13 @@ type CrawlHandler struct {
 
 // CrawlProcessor interface
 func (h *CrawlHandler)Status(s *string){
+    ins := "X"
     if h.input_chan != nil {
-        string_util.StringAppendF(s, "(%d-%d/%d-%d/%d)", len(h.input_chan),
-            h.process_num, h.accept_num,
-            h.avg_process_time, h.max_process_time)
+        ins = fmt.Sprintf("%d",len(h.input_chan))
     }
+    string_util.StringAppendF(s, "(%s-%d/%d-%d/%d)", ins,
+        h.process_num, h.accept_num,
+        h.avg_process_time, h.max_process_time)
 }
 
 func (h *CrawlHandler)Process(*proto.CrawlDoc) {

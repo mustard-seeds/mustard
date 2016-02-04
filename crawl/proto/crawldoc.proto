@@ -105,6 +105,8 @@ message FetchHint {
 message CrawlRecord {
     int64   request_time    = 1;
     ConnectionInfo fetcher  = 2;
+    int64   fetch_time      = 3;
+    int64   fetch_use       = 4;
 }
 message CrawlParam {
     Priority    pri         =   1;

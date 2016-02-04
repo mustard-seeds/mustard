@@ -48,7 +48,7 @@ func (hlq *HostLoadQueue)Size() int {
 }
 
 //////////////////////////////////////////////////////////
-
+// no need lock, it is all in one thread.
 type HostLoader struct {
     hostMap map[string]*HostLoadQueue
     uim int
@@ -88,6 +88,7 @@ func (hl *HostLoader)Travel(s map[string]int64, f func(*proto.CrawlDoc) bool) {
         if v.Empty() {
             rel++
             release = append(release, k)
+            continue
         }
         now := time_util.GetCurrentTimeStamp()
         doc,_ := v.Top()

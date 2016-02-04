@@ -74,7 +74,7 @@ CMD="$BIN
     --crawl_request_port=$PORT
     --conf_path_prefix=$MDATA
     --http_port=$HPORT
-    --v=3
+    --v=4
     --stdout=true"
 checkOnce() {
   pnum=`ps -ef |grep "$BIN"|grep -c $HPORT`
@@ -108,7 +108,7 @@ start() {
 }
 stop() {
   echo "Stop: `basename $BIN` port: $HPORT"
-  check
+  checkOnce
   if [ $? -eq 0 ];then
     pid=`ps -ef |grep "$BIN"|grep $HPORT|awk '{print $2}'`
     kill -9 $pid

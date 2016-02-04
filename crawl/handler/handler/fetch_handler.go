@@ -5,6 +5,7 @@ import (
     "mustard/crawl/proto"
     "mustard/base/time_util"
     "mustard/base/string_util"
+    "fmt"
 )
 
 type FetchHandler struct {
@@ -42,6 +43,7 @@ func (h *FetchHandler)Run(p CrawlProcessor) {
         // non blocking channel
         select {
         case doc := <- h.input_chan:
+            LOG.VLog(4).Debugf("Fetcher Handler Get One %s", doc.RequestUrl)
             h.process_num++
             h.accept_num++
             // send to hostload
@@ -56,6 +58,7 @@ func (h *FetchHandler)Run(p CrawlProcessor) {
         default:
             time_util.Sleep(1)
         }
+        fmt.Println()
         h.hostloader.Travel(h.conns.GetCrawlHostMap(), func(doc *proto.CrawlDoc) bool{
             // travel will return the reach time doc. then use connections to fetch.
             // if can not fetch, will return false, then hostloader will not delete it
@@ -63,7 +66,6 @@ func (h *FetchHandler)Run(p CrawlProcessor) {
         })
         time_util.Sleep(1)
     }
-    h.crawlDoc = <- h.input_chan
 }
 
 func (h *FetchHandler)processSiteQueueFul(doc *proto.CrawlDoc) {

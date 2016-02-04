@@ -17,16 +17,26 @@ type CrawlHandlerController struct {
      InputProcessors []handler.CrawlTask
      ProcessChain []handler.CrawlTask
 }
+func (c *CrawlHandlerController)getOutputStat(stat *string, separatorLine, separatorColumn string) {
+    *stat = separatorLine + "InputProcessors" + separatorLine
+    for _,h := range c.InputProcessors {
+        string_util.StringAppendF(stat, "%s:",
+            reflect.Indirect(reflect.ValueOf(h)).Type().Name())
+        h.Status(stat)
+        *stat += separatorColumn
+    }
+    *stat += separatorLine + "ProcessChain" + separatorLine
+    for _,h := range c.ProcessChain {
+        string_util.StringAppendF(stat, "%s:",
+            reflect.Indirect(reflect.ValueOf(h)).Type().Name())
+        h.Status(stat)
+        *stat += separatorColumn
+    }
+}
 func (c *CrawlHandlerController)MonitorReport(result *babysitter.MonitorResult) {
     // TODO add logic for handler babysitter
-    stat := "\n"
-    for _,h := range c.ProcessChain {
-        string_util.StringAppendF(&stat, "%s:",
-            reflect.Indirect(reflect.ValueOf(h)).Type().Name())
-        h.Status(&stat)
-        string_util.StringAppendF(&stat, "   ")
-        stat += "<br>"
-    }
+    stat := ""
+    c.getOutputStat(&stat, "<br>", "<br>")
     result.AddString(stat)
 }
 func (c *CrawlHandlerController)InitCrawlService() {
@@ -69,12 +79,7 @@ func (c *CrawlHandlerController)InitCrawlService() {
     }
 }
 func (c *CrawlHandlerController)PrintStatus() {
-    stat := "\n"
-    for _,h := range c.ProcessChain {
-        string_util.StringAppendF(&stat, "%s:",
-            reflect.Indirect(reflect.ValueOf(h)).Type().Name())
-        h.Status(&stat)
-        string_util.StringAppendF(&stat, "   ")
-    }
+    stat := ""
+    c.getOutputStat(&stat, "\n", "   ")
     LOG.VLog(3).Debug(stat)
 }

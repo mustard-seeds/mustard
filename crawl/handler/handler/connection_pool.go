@@ -21,7 +21,7 @@ type Connection struct {
 // follow redirect?
 
 // run in goroutine
-func (c *Connection)FetchOne(doc *proto.CrawlDoc, f func(_doc *proto.CrawlDoc, conn *Connection)) {
+func (c *Connection)FetchOne(doc *proto.CrawlDoc, f func(*proto.CrawlDoc, *Connection)) {
     // TODO fetch doc and fill field
     time_util.Sleep(3)
     f(doc, c)
@@ -41,7 +41,6 @@ func (c *ConnectionPool)SetOutChan(output_chan  chan<- *proto.CrawlDoc) {
 }
 
 func (c *ConnectionPool)GetCrawlHostMap() map[string]int64 {
-    // TODO release c.record
     return c.record
 }
 func (c *ConnectionPool)FreeConnectionNum() int {
@@ -92,12 +91,15 @@ func (c *ConnectionPool)Fetch(doc *proto.CrawlDoc) bool {
     c.free = c.free[1:]
     c.busy[conn] = true
     c.hold[host] = true
+    // use goroutine to fetch.
+    doc.CrawlRecord.FetchTime = time_util.GetCurrentTimeStamp()
     go conn.FetchOne(doc,func(doc *proto.CrawlDoc, conn *Connection){
         c.free = append(c.free, conn)
         delete(c.busy,conn)
         c.record[base.GetHostName(doc)] = time_util.GetCurrentTimeStamp()
         c.hold[base.GetHostName(doc)] = false
         c.output_chan <- doc
+        doc.CrawlRecord.FetchUse = time_util.GetCurrentTimeStamp() - doc.CrawlRecord.FetchTime
     })
     c.releaseRecordAndHold()
     return true

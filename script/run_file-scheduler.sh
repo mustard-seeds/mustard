@@ -114,7 +114,7 @@ start() {
 
 stop() {
   echo "Stop: `basename $BIN` port: $HPORT"
-  check
+  checkOnce
   if [ $? -eq 0 ];then
     pid=`ps -ef |grep "$BIN"|grep $HPORT|awk '{print $2}'`
     kill -9 $pid

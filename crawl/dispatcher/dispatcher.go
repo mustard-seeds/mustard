@@ -18,6 +18,7 @@ import (
     "strconv"
     "mustard/utils/babysitter"
     "time"
+    "fmt"
 )
 var CONF = conf.Conf
 
@@ -78,8 +79,12 @@ func (cf *CrawlerFeeder)AddFeed(doc *pb.CrawlDoc) bool{
     }
 }
 func (cf *CrawlerFeeder)Flush() {
+    LOG.VLog(4).Debugf("Feeder Try Flush CacheDoc %d to %s:%d", len(cf.docCache), cf.host, cf.port)
     for (len(cf.crawldocs.Docs) < kMaxBatchFeedSize && len(cf.docCache) > 0) {
         doc := cf.docCache[0]
+        if doc.CrawlRecord.GetFetcher() == nil {
+            doc.CrawlRecord.Fetcher = &pb.ConnectionInfo{}
+        }
         doc.CrawlRecord.Fetcher.Host = cf.host
         doc.CrawlRecord.Fetcher.Port = int32(cf.port)
         cf.crawldocs.Docs = append(cf.crawldocs.Docs, doc)
@@ -88,6 +93,7 @@ func (cf *CrawlerFeeder)Flush() {
     if (len(cf.crawldocs.Docs) == 0) {
         return
     }
+    LOG.VLog(4).Debugf("Feeder Prepare Flush %d docs to %s:%d", len(cf.crawldocs.Docs), cf.host, cf.port)
     response,err := cf.client.Feed(context.Background(), &cf.crawldocs)
     if (err != nil) {
         LOG.Errorf("Fail to Feed for Exception %s:%d",cf.host,cf.port)
@@ -146,6 +152,7 @@ func (cf *CrawlerFeeder)IsHealthy() bool{
         // TODO, if dispatcher call itself, will deadlock
         response,err := cf.client.IsHealthy(context.Background(),&pb.CrawlRequest{Request:"Dispatch"})
         if (err != nil) {
+            LOG.VLog(2).Debugf("Connect %s:%d Error %s",cf.host,cf.port,err.Error())
             cf.connected = false
             return false
         }
@@ -197,9 +204,10 @@ func (d *Dispatcher)SelectCrawler(doc *pb.CrawlDoc) uint32{
 
     for (true) {
         _,present := d.feeders.deadFeeders[live_crawler_id]
-        if present {
+        if !present {
             break
         }
+        // if live_crawler_id is in deadFeeders, it should shift next
         live_crawler_id++
         live_crawler_id = live_crawler_id % uint32(len(d.feeders.feeders))
         if (live_crawler_id == crawlerId) {
@@ -242,7 +250,7 @@ func (d *Dispatcher)Feed(ctx context.Context, docs *pb.CrawlDocs) (*pb.CrawlResp
     defer d.Unlock()
     for _,v := range docs.Docs {
         var crawlerid uint32 = d.SelectCrawler(v)
-        LOG.VLog(3).Debugf("New Url:%s, RequestType:%d,CrawlerId:%d",v.RequestUrl,crawlerid)
+        LOG.VLog(3).Debugf("New Url:%s, RequestType:%d,CrawlerId:%d",v.RequestUrl,v.CrawlParam.Rtype,crawlerid)
         if (crawlerid != kInvalidCrawlerID) {
             if (!d.feeders.feeders[crawlerid].AddFeed(v)) {
                 // TODO: SITEQUEUEFULL send to fetcher's handler directly
@@ -255,6 +263,7 @@ func (d *Dispatcher)Feed(ctx context.Context, docs *pb.CrawlDocs) (*pb.CrawlResp
     return &pb.CrawlResponse{Ok:true},nil
 }
 func (d *Dispatcher)IsHealthy(ctx context.Context, request *pb.CrawlRequest) (*pb.CrawlResponse, error) {
+    LOG.VLog(4).Debugf("From %s Call Dispatcher IsHealthy", request.Request)
     d.Lock()
     defer d.Unlock()
     if (float64(len(d.feeders.liveFeeders)) < (float64(len(d.feeders.liveFeeders) + len(d.feeders.deadFeeders))* *CONF.Crawler.DispatchLiveFeederRatio)) {
@@ -333,11 +342,18 @@ func (d *Dispatcher)MonitorReport(result *babysitter.MonitorResult) {
         queuefull_urls += d.feeders.feeders[k].queuefull_urls
         td_list = append(td_list, tds)
     }
+    _h,_e := d.IsHealthy(context.Background(),&pb.CrawlRequest{Request:"ItselfCheck"})
+    healthy := fmt.Sprintf("%t",_h.Ok)
+    if _e != nil {
+        healthy = fmt.Sprintf("%t(%s)",_h.Ok,_e.Error())
+    }
+
     string_util.StringAppendF(&info,
         "<style type=\"text/css\">"+
         " table {font-size: 80%%;}"+
         "</style>"+
         "<b> Crawler Dispatcher Summary (start at %s) </b><pre>"+
+        "<key>IsHealthy </key>&nbsp;&nbsp;:&nbsp;&nbsp;<value>%s</value><br>"+
         "<key>Live feeders  </key>&nbsp;&nbsp;:&nbsp;&nbsp;<value>%d</value><br>"+
         "<key>Dead feeders  </key>&nbsp;&nbsp;:&nbsp;&nbsp;<value>%d</value><br>"+
         "<key>Processed Urls</key>&nbsp;&nbsp;:&nbsp;&nbsp;<value>%d</value><br>"+
@@ -345,6 +361,7 @@ func (d *Dispatcher)MonitorReport(result *babysitter.MonitorResult) {
         "<key>QueueFull Urls</key>&nbsp;&nbsp;:&nbsp;&nbsp;<value>%d</value><br>"+
         "</pre>",
         d.start_time_str,
+        healthy,
         len(d.feeders.liveFeeders),
         len(d.feeders.deadFeeders),
         process_urls,
