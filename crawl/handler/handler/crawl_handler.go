@@ -13,7 +13,8 @@ import (
 var CONF = conf.Conf
 
 type CrawlTask interface {
-    Run(p CrawlProcessor)
+    Init() bool             // call at crawlhandlercontroller before Run
+    Run(p CrawlProcessor)   // you can overwrite run function.
     Output(doc *proto.CrawlDoc)
     SetInputChan(in <-chan*proto.CrawlDoc)
     SetOutputChan(out chan<-*proto.CrawlDoc)
@@ -23,8 +24,8 @@ type CrawlTask interface {
 }
 
 type CrawlProcessor interface {
-    Process(*proto.CrawlDoc)
-    Accept(*proto.CrawlDoc) bool
+    Process(*proto.CrawlDoc)  // use CrawlHandler Run Func
+    Accept(*proto.CrawlDoc) bool // use Crawlhandler Run Func
 }
 
 type CrawlHandler struct {
@@ -38,7 +39,9 @@ type CrawlHandler struct {
     max_process_time    int64
     avg_process_time    int64
 }
-
+func (h *CrawlHandler)Init() bool {
+    return true
+}
 // CrawlProcessor interface
 func (h *CrawlHandler)Status(s *string){
     ins := "X"

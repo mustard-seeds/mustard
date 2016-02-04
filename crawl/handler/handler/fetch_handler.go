@@ -26,7 +26,8 @@ func (h *FetchHandler)Status(s *string) {
             len(h.conns.record))
     }
 }
-func (h *FetchHandler)Init() {
+func (h *FetchHandler)Init() bool {
+    LOG.VLog(3).Debugf("FetcherHandler Init")
     h.hostloader = &HostLoader{
         hostMap: make(map[string]*HostLoadQueue),
     }
@@ -36,9 +37,9 @@ func (h *FetchHandler)Init() {
         busy : make(map[*Connection]bool),
         output_chan : h.output_chan,
     }
+    return true
 }
 func (h *FetchHandler)Run(p CrawlProcessor) {
-    h.Init()
     for {
         // non blocking channel
         select {

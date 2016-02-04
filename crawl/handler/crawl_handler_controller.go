@@ -9,6 +9,7 @@ import (
     "reflect"
     "mustard/base/string_util"
     "mustard/utils/babysitter"
+    "mustard/base"
 )
 
 var CONF = conf.Conf
@@ -74,10 +75,12 @@ func (c *CrawlHandlerController)InitCrawlService() {
     c.ProcessChain[len(c.ProcessChain)-1].SetOutputChan(nil)
     for _,p := range c.ProcessChain {
         LOG.Infof("%s Start to Run", reflect.TypeOf(p))
+        base.CHECK(p.Init(),"%s Init Fail",reflect.TypeOf(p))
         go p.Run(p.(handler.CrawlProcessor))
     }
     for _,r := range c.InputProcessors {
         LOG.Infof("%s Start to Run", reflect.TypeOf(r))
+        base.CHECK(r.Init(),"%s Init Fail",reflect.TypeOf(r))
         go r.Run(r.(handler.CrawlProcessor))
     }
 }

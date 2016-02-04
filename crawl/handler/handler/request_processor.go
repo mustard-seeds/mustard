@@ -43,6 +43,10 @@ func (request *RequestProcessor)IsHealthy(ctx context.Context, r *pb.CrawlReques
         Ret:int64(*CONF.Crawler.ChannelBufSize - len(request.output_chan)),
     },nil
 }
+func (h *RequestProcessor)Init() bool {
+    LOG.VLog(3).Debug("RequestProcessor Init Finish")
+    return true
+}
 func (h *RequestProcessor)Status(s *string) {
     h.CrawlHandler.Status(s)
     string_util.StringAppendF(s, "[(%t)%d/%d-%g]",h._isHealthy(), len(h.output_chan),

@@ -9,6 +9,9 @@ type ResponseHandler struct {
     // client cache, could reconnect.
     clients map[string]proto.CrawlServiceClient
 }
+func (doc *ResponseHandler)Init() bool {
+    return false
+}
 func (doc *ResponseHandler)Accept(crawlDoc *proto.CrawlDoc)bool {
     return true
 }
