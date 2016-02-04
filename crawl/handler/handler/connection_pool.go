@@ -16,7 +16,7 @@ type Connection struct {
     client  *http.Client
 }
 // http proxy
-// custom header
+// custom
 // timeout,connection/read
 // follow redirect?
 

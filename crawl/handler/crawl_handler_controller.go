@@ -25,6 +25,7 @@ func (c *CrawlHandlerController)MonitorReport(result *babysitter.MonitorResult) 
             reflect.Indirect(reflect.ValueOf(h)).Type().Name())
         h.Status(&stat)
         string_util.StringAppendF(&stat, "   ")
+        stat += "<br>"
     }
     result.AddString(stat)
 }

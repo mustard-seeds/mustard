@@ -27,6 +27,8 @@ const (
     kMagicNumber      uint32 = 113
     kFeedSpeedInterval int64 = 60
     kStatusPageColSize int = 8
+
+    kPortStep = 50
 )
 // send crawldoc to target server
 // dispatch as:  host/domain/url/random
@@ -378,7 +380,7 @@ func (d *Dispatcher)fillTDString(feeder *CrawlerFeeder, alive bool, tds *string)
         "<key>QueueFull Urls</key>&nbsp;&nbsp;:&nbsp;&nbsp;<value>%d</value><br>" +
         "</pre></div></td>",
         feeder.host,
-        feeder.port,
+        feeder.port + kPortStep,
         feeder.host,
         feeder.port,
         status,

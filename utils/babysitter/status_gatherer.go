@@ -3,15 +3,12 @@ import (
 	"os"
 	"mustard/base/string_util"
 	"fmt"
+	"strings"
 )
 func machineInfo() map[string]string {
 	//TODO pid,cmd, cpunum,total mem, ip port hostname, uptime,
 	machine := make(map[string]string)
-	var cmd string
-	for _,s := range os.Args {
-		cmd += s
-	}
-	machine["cmd"] = cmd
+	machine["cmd"] = strings.Join(os.Args, " ")
 	machine["pid"] = fmt.Sprintf("%d",os.Getpid())
 	machine["uid"] = fmt.Sprintf("%d",os.Getuid())
 	machine["hostname"],_ = os.Hostname()

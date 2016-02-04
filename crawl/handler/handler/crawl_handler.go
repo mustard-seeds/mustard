@@ -2,9 +2,9 @@ package handler
 
 import (
     "mustard/base/time_util"
+    "mustard/base/conf"
     "reflect"
     LOG "mustard/base/log"
-    "mustard/base/conf"
     "mustard/crawl/proto"
     "mustard/base/string_util"
 )

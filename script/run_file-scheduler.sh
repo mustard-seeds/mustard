@@ -14,10 +14,11 @@ LOG_PATH=../logs
 MDATA=../mdata
 
 REPLICA=0
+# shard is not used
 SHARD=0
 
-# HTTP_PORT - 50 == SERVICE_PORT
-SERVICE_PORT=9000
+# HTTP_PORT_BASE - 50 == SERVICE_PORT
+SERVICE_PORT=9200
 
 get_runtime_path() {
   CPATH=$1
@@ -65,15 +66,20 @@ LOG_FILE=$LOG_PATH/`basename $BIN`.log
 mkdir -p  $LOG_PATH
 
 CMD="$BIN
-    --feeder_max_pendings=100
-    --group_feeder_max_pendings=1000
-    --dispatch_flush_interval=10
+    --dispatcher_host=127.0.0.1
+    --dispatcher_port=9000
     --dispatch_as=host
-    --crawlers_config_file=etc/crawl/crawlers.config
+    --hostload_config_file=etc/crawl/hostload.config
+    --receivers_config_file=etc/crawl/receivers.config
+    --multifetcher_config_file=etc/crawl/multifetcher.config
+    --fakehost_config_file=etc/crawl/fakehost.config
+    --default_hostload=5
+    --config_file_reload_interval=60
+    --schedule_file=/Users/glc/workspace/test/1.url
+    --default_send_speed=4
     --conf_path_prefix=$MDATA
-    --dispatcher_port=$PORT
     --http_port=$HPORT
-    --v=3
+    --v=4
     --stdout=true"
 checkOnce() {
   pnum=`ps -ef |grep "$BIN"|grep -c $HPORT`
@@ -105,6 +111,7 @@ start() {
       return 2
   fi
 }
+
 stop() {
   echo "Stop: `basename $BIN` port: $HPORT"
   check

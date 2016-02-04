@@ -1,6 +1,7 @@
 package scheduler
 import (
     "strconv"
+    "reflect"
     pb "mustard/crawl/proto"
     "mustard/base"
     "mustard/base/conf"
@@ -60,12 +61,15 @@ func (m *ParamFillerMaster)RegisterJobDescription(jd *JobDescription) {
     m.jd = jd
 }
 func (m *ParamFillerMaster)Init() {
+    // package first...
+    m.fillers.Package()
     for _,v := range m.fillers.Fillers() {
         v.Init()
     }
 }
 func (m *ParamFillerMaster)Fill(doc *pb.CrawlDoc) {
     for _,v := range m.fillers.Fillers() {
+        LOG.VLog(4).Debugf("Fill %s by %s", doc.RequestUrl, reflect.Indirect(reflect.ValueOf(v)).Type().Name())
         v.Fill(m.jd,doc)
     }
 }
@@ -112,6 +116,9 @@ func (p *PrepareParamFiller)Fill(jd *JobDescription, doc *pb.CrawlDoc) {
     if doc.CrawlParam.GetFetchHint() == nil {
         doc.CrawlParam.FetchHint = &pb.FetchHint{}
     }
+    if doc.GetCrawlRecord() == nil {
+        doc.CrawlRecord = &pb.CrawlRecord{}
+    }
     // fill url
     doc.Url = url_parser.NormalizeUrl(doc.RequestUrl)
     doc.CrawlParam.FetchHint.Host = url_parser.GetURLObj(doc.Url).Host
@@ -124,7 +131,7 @@ type FakeHostParamFiller struct {
 }
 func (f *FakeHostParamFiller)loadFakeHostConfigFile() {
     fname := file.GetConfFile(*CONF.Crawler.FakeHostConfigFile)
-    result,fresh := crawl_base.LoadConfigWithTwoField("FakeHost", fname, ",")
+    result,fresh := crawl_base.LoadConfigWithTwoField("FakeHost", fname, ",", &f.last_load_time)
     if fresh {
         for k, v := range result {
             f.fakehost[k] = v
@@ -136,8 +143,7 @@ func (f *FakeHostParamFiller)Init() {
     f.fakehost = make(map[string]string)
     f.loadFakeHostConfigFile()
 }
-func (f *FakeHostParamFiller)Fill(jd *JobDescription, doc *pb.CrawlDoc) {
-    f.loadFakeHostConfigFile()
+func (f *FakeHostParamFiller)fill(jd *JobDescription, doc *pb.CrawlDoc) {
     for k,v := range f.fakehost {
         r,_ := regexp.Compile(k)
         regexRet := r.FindAllString(doc.CrawlParam.FetchHint.Host, -1)
@@ -146,6 +152,10 @@ func (f *FakeHostParamFiller)Fill(jd *JobDescription, doc *pb.CrawlDoc) {
         }
     }
 }
+func (f *FakeHostParamFiller)Fill(jd *JobDescription, doc *pb.CrawlDoc) {
+    f.loadFakeHostConfigFile()
+    f.fill(jd,doc)
+}
 
 type HostLoadParamFiller struct {
     hostload map[string]int
@@ -153,7 +163,7 @@ type HostLoadParamFiller struct {
 }
 func (h *HostLoadParamFiller)loadHostloadConfigFile() {
     fname := file.GetConfFile(*CONF.Crawler.HostLoadConfigFile)
-    result,fresh := crawl_base.LoadConfigWithTwoField("HostLoad", fname, ",")
+    result,fresh := crawl_base.LoadConfigWithTwoField("HostLoad", fname, ",", &h.last_load_time)
     if fresh {
         for k,v := range result {
             hl,err := strconv.Atoi(v)
@@ -170,8 +180,7 @@ func (h *HostLoadParamFiller)Init() {
     h.hostload = make(map[string]int)
     h.loadHostloadConfigFile()
 }
-func (h *HostLoadParamFiller)Fill(jd *JobDescription, doc *pb.CrawlDoc) {
-    h.loadHostloadConfigFile()  // reload
+func (h *HostLoadParamFiller)fill(jd *JobDescription, doc *pb.CrawlDoc) {
     host := crawl_base.GetHostName(doc)
     hl := *CONF.Crawler.DefaultHostLoad
     thl,present := h.hostload[host]
@@ -180,6 +189,10 @@ func (h *HostLoadParamFiller)Fill(jd *JobDescription, doc *pb.CrawlDoc) {
     }
     doc.CrawlParam.Hostload = int32(hl)
 }
+func (h *HostLoadParamFiller)Fill(jd *JobDescription, doc *pb.CrawlDoc) {
+    h.loadHostloadConfigFile()  // reload
+    h.fill(jd, doc)
+}
 
 type MultiFetcherParamFiller struct {
     multifetcher map[string]int
@@ -187,7 +200,7 @@ type MultiFetcherParamFiller struct {
 }
 func (f *MultiFetcherParamFiller)loadMultiFetcherConfigFile() {
     fname := file.GetConfFile(*CONF.Crawler.MultiFetcherConfigFile)
-    result,fresh := crawl_base.LoadConfigWithTwoField("HostLoad", fname, ",")
+    result,fresh := crawl_base.LoadConfigWithTwoField("HostLoad", fname, ",", &f.last_load_time)
     if fresh {
         for k,v := range result {
             hl,err := strconv.Atoi(v)
@@ -204,8 +217,7 @@ func (f *MultiFetcherParamFiller)Init() {
     f.multifetcher = make(map[string]int)
     f.loadMultiFetcherConfigFile()
 }
-func (f *MultiFetcherParamFiller)Fill(jd *JobDescription, doc *pb.CrawlDoc) {
-    f.loadMultiFetcherConfigFile()
+func (f *MultiFetcherParamFiller)fill(jd *JobDescription, doc *pb.CrawlDoc) {
     host := crawl_base.GetHostName(doc)
     mf := 1
     thl,present := f.multifetcher[host]
@@ -214,6 +226,10 @@ func (f *MultiFetcherParamFiller)Fill(jd *JobDescription, doc *pb.CrawlDoc) {
     }
     doc.CrawlParam.FetcherCount = int32(mf)
 }
+func (f *MultiFetcherParamFiller)Fill(jd *JobDescription, doc *pb.CrawlDoc) {
+    f.loadMultiFetcherConfigFile()
+    f.fill(jd,doc)
+}
 
 type ReceiverParamFiller struct {
     receivers map[string]*pb.ConnectionInfo
@@ -221,7 +237,7 @@ type ReceiverParamFiller struct {
 }
 func (f *ReceiverParamFiller)loadReceiverConfigFile() {
     fname := file.GetConfFile(*CONF.Crawler.ReceiversConfigFile)
-    result,fresh := crawl_base.LoadConfigWithTwoField("HostLoad", fname, ":")
+    result,fresh := crawl_base.LoadConfigWithTwoField("HostLoad", fname, ":", &f.last_load_time)
     if fresh {
         for k,v := range result {
             hl,err := strconv.Atoi(v)
@@ -238,11 +254,15 @@ func (f *ReceiverParamFiller)Init() {
     f.receivers = make(map[string]*pb.ConnectionInfo)
     f.loadReceiverConfigFile()
 }
-func (f *ReceiverParamFiller)Fill(jd *JobDescription, doc *pb.CrawlDoc) {
-    f.loadReceiverConfigFile()
+func (f *ReceiverParamFiller)fill(jd *JobDescription, doc *pb.CrawlDoc) {
     for _,v := range f.receivers {
         doc.CrawlParam.Receivers = append(doc.CrawlParam.Receivers, v)
     }
+}
+
+func (f *ReceiverParamFiller)Fill(jd *JobDescription, doc *pb.CrawlDoc) {
+    f.loadReceiverConfigFile()
+    f.fill(jd,doc)
 }
 
 type TagParamFiller struct {
@@ -254,15 +274,27 @@ func (h *TagParamFiller)Fill(jd *JobDescription, doc *pb.CrawlDoc) {
     if jd.isUrgent {
         doc.CrawlParam.Pri = pb.Priority_URGENT
     }
-    doc.CrawlParam.PrimaryTag = jd.primeTag
+    if doc.CrawlParam.PrimaryTag == "" {
+        doc.CrawlParam.PrimaryTag = jd.primeTag
+    }
     for _,v := range jd.secondTag {
         doc.CrawlParam.SecondaryTag = append(doc.CrawlParam.SecondaryTag,v)
     }
-    doc.CrawlParam.RandomHostload = int32(jd.randomHostLoad)
+    if doc.CrawlParam.RandomHostload == 0 {
+        doc.CrawlParam.RandomHostload = int32(jd.randomHostLoad)
+    }
     doc.CrawlParam.DropContent = jd.dropContent
-    doc.CrawlParam.Rtype = pb.RequestType(jd.requestType)
+    if doc.CrawlParam.Rtype == 0 {
+        doc.CrawlParam.Rtype = pb.RequestType(jd.requestType)
+    }
     // storage
-    doc.CrawlParam.StoreEngine = jd.storeEngine
-    doc.CrawlParam.StoreDb = jd.storeDb
-    doc.CrawlParam.StoreTable = jd.storeTable
+    if doc.CrawlParam.StoreEngine == "" {
+        doc.CrawlParam.StoreEngine = jd.storeEngine
+    }
+    if doc.CrawlParam.StoreDb == "" {
+        doc.CrawlParam.StoreDb = jd.storeDb
+    }
+    if doc.CrawlParam.StoreTable == "" {
+        doc.CrawlParam.StoreTable = jd.storeTable
+    }
 }

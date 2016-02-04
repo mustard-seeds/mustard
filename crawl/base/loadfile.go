@@ -9,14 +9,13 @@ import (
 )
 
 var CONF = conf.Conf
-var last_load_time int64
 
-func LoadConfigWithTwoField(name,filename,splitS string) (map[string]string,bool) {
-    if time_util.GetCurrentTimeStamp() - last_load_time < int64(*CONF.Crawler.ConfigFileReloadInterval) {
+func LoadConfigWithTwoField(name,filename,splitS string, last_load_time *int64) (map[string]string,bool) {
+    if time_util.GetCurrentTimeStamp() - *last_load_time < int64(*CONF.Crawler.ConfigFileReloadInterval) {
         return nil,false
     }
     result := make(map[string]string)
-    last_load_time = time_util.GetCurrentTimeStamp()
+    *last_load_time = time_util.GetCurrentTimeStamp()
     LOG.Infof("Load Config %s",*CONF.Crawler.HostLoadConfigFile)
     file.FileLineReader(filename, "#", func(line string){
         addr :=strings.Split(line, splitS)

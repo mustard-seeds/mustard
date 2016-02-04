@@ -56,7 +56,7 @@ func (s *CrawlDocSender)Flush(doc *pb.CrawlDoc) {
 			time_util.Usleep(10*1000)
 			now = time_util.GetCurrentTimeStamp()
 		}
-		LOG.VLog(1).Debugf("Send url in Second:%d",s.url_sent_in_sec)
+		LOG.VLog(1).Debugf("Send url Speed %d/Second",s.url_sent_in_sec)
 		s.send_speed = s.url_sent_in_sec
 		s.url_sent_in_sec = 0
 		s.timestamp = now

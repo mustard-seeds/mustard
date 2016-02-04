@@ -14,10 +14,11 @@ LOG_PATH=../logs
 MDATA=../mdata
 
 REPLICA=0
+# shard is not used
 SHARD=0
 
-# HTTP_PORT - 50 == SERVICE_PORT
-SERVICE_PORT=9000
+# HTTP_PORT_BASE - 50 == SERVICE_PORT
+SERVICE_PORT=9100
 
 get_runtime_path() {
   CPATH=$1
@@ -65,13 +66,13 @@ LOG_FILE=$LOG_PATH/`basename $BIN`.log
 mkdir -p  $LOG_PATH
 
 CMD="$BIN
-    --feeder_max_pendings=100
-    --group_feeder_max_pendings=1000
-    --dispatch_flush_interval=10
-    --dispatch_as=host
-    --crawlers_config_file=etc/crawl/crawlers.config
+    --crawl_handler_chain=FetchHandler;DocHandler;StorageHandler
+    --crawl_input_processor=RequestProcessor
+    --channel_buffer_size=10
+    --host_load_queue_size=10
+    --fetch_connection_number=20
+    --crawl_request_port=$PORT
     --conf_path_prefix=$MDATA
-    --dispatcher_port=$PORT
     --http_port=$HPORT
     --v=3
     --stdout=true"
@@ -125,6 +126,7 @@ status() {
     return 1
   fi
 }
+
 startDirect() {
   echo $CMD
   $CMD
