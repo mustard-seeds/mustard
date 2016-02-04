@@ -33,6 +33,9 @@ func (c *CrawlHandlerController)getOutputStat(stat *string, separatorLine, separ
         *stat += separatorColumn
     }
 }
+func (d *CrawlHandlerController)MonitorReportHealthy() error {
+    return nil
+}
 func (c *CrawlHandlerController)MonitorReport(result *babysitter.MonitorResult) {
     // TODO add logic for handler babysitter
     stat := ""

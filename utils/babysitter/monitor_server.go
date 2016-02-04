@@ -11,10 +11,12 @@ import (
 const (
 	StatusUiPath = "/statusi"
 	StatusUiAPIPath = "/statusi/api/machine"
+	StatusUiAPIHealthyPath = "/statusi/api/healthy"
 )
 
 type MonitorInterface interface {
 	MonitorReport(*MonitorResult)
+	MonitorReportHealthy() error
 }
 type MonitorHandleFunc interface {
 	MHandleFunc(string, func(w http.ResponseWriter, r *http.Request))
@@ -62,6 +64,20 @@ func (m *MonitorServer)StatusiApi(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type","application/json")
 	w.Write(info)
 }
+func (m *MonitorServer)StatusiHealthyApi(w http.ResponseWriter, r *http.Request) {
+	type StatusHealthy struct {
+		Healthy bool `json:"Healthy"`
+		Reason string `json:"Reason"`
+	}
+	// json.Marshal only encode Uppercase field in struct...
+	info,_ := json.Marshal(StatusHealthy{Healthy:true})
+	err := m.monitor.MonitorReportHealthy()
+	if err != nil {
+		info,_ = json.Marshal(StatusHealthy{Healthy:false,Reason:err.Error()})
+	}
+	w.Header().Set("Content-Type","application/json")
+	w.Write(info)
+}
 func (m *MonitorServer)Statusi(w http.ResponseWriter, r *http.Request) {
 	m.monitor.MonitorReport(m.result)
 	w.Header().Set("Server","Golang Server")
@@ -71,6 +87,13 @@ func (m *MonitorServer)Statusi(w http.ResponseWriter, r *http.Request) {
 	string_util.StringAppendF(&infos,"%s",m.result.machine)
 	infos += "<h1>Status Info</h1>"
 	string_util.StringAppendF(&infos, "%s", statusInfoHtml())
+	infos += "<h1> Healthy </h1>"
+	healthy := fmt.Sprintf("%t", true)
+	err := m.monitor.MonitorReportHealthy()
+	if err != nil {
+		healthy = fmt.Sprintf("%t(%s)", false, err.Error())
+	}
+	string_util.StringAppendF(&infos, "%s", healthy)
 	infos += "<h1>Application Info</h1>"
 	for k,v := range m.result.kv {
 		string_util.StringAppendF(&infos, "<key>%s : <value>%s<br>", k, v)
@@ -82,8 +105,10 @@ func (m *MonitorServer)Serve(port int) {
 	r := mux.NewRouter()
 	r.HandleFunc(StatusUiPath, m.Statusi)
 	r.HandleFunc(StatusUiAPIPath, m.StatusiApi)
+	r.HandleFunc(StatusUiAPIHealthyPath, m.StatusiHealthyApi)
 	LOG.Infof("MonitorServer Serve path %s", StatusUiPath)
 	LOG.Infof("MonitorServer Serve path %s", StatusUiAPIPath)
+	LOG.Infof("MonitorServer Serve path %s", StatusUiAPIHealthyPath)
 	for k,v := range m.handleFunc {
 		r.HandleFunc(k,v)
 		LOG.Infof("MonitorServer Serve path %s", k)

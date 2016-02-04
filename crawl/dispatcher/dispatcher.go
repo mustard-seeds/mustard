@@ -18,8 +18,8 @@ import (
     "strconv"
     "mustard/utils/babysitter"
     "time"
-    "fmt"
 )
+
 var CONF = conf.Conf
 
 const (
@@ -342,18 +342,13 @@ func (d *Dispatcher)MonitorReport(result *babysitter.MonitorResult) {
         queuefull_urls += d.feeders.feeders[k].queuefull_urls
         td_list = append(td_list, tds)
     }
-    _h,_e := d.IsHealthy(context.Background(),&pb.CrawlRequest{Request:"ItselfCheck"})
-    healthy := fmt.Sprintf("%t",_h.Ok)
-    if _e != nil {
-        healthy = fmt.Sprintf("%t(%s)",_h.Ok,_e.Error())
-    }
+
 
     string_util.StringAppendF(&info,
         "<style type=\"text/css\">"+
         " table {font-size: 80%%;}"+
         "</style>"+
         "<b> Crawler Dispatcher Summary (start at %s) </b><pre>"+
-        "<key>IsHealthy </key>&nbsp;&nbsp;:&nbsp;&nbsp;<value>%s</value><br>"+
         "<key>Live feeders  </key>&nbsp;&nbsp;:&nbsp;&nbsp;<value>%d</value><br>"+
         "<key>Dead feeders  </key>&nbsp;&nbsp;:&nbsp;&nbsp;<value>%d</value><br>"+
         "<key>Processed Urls</key>&nbsp;&nbsp;:&nbsp;&nbsp;<value>%d</value><br>"+
@@ -361,7 +356,6 @@ func (d *Dispatcher)MonitorReport(result *babysitter.MonitorResult) {
         "<key>QueueFull Urls</key>&nbsp;&nbsp;:&nbsp;&nbsp;<value>%d</value><br>"+
         "</pre>",
         d.start_time_str,
-        healthy,
         len(d.feeders.liveFeeders),
         len(d.feeders.deadFeeders),
         process_urls,
@@ -382,6 +376,10 @@ func (d *Dispatcher)MonitorReport(result *babysitter.MonitorResult) {
     }
     info += "</table>";
     result.AddString(info)
+}
+func (d *Dispatcher)MonitorReportHealthy() error {
+    _,_e := d.IsHealthy(context.Background(),&pb.CrawlRequest{Request:"ItselfCheck"})
+    return _e
 }
 func (d *Dispatcher)fillTDString(feeder *CrawlerFeeder, alive bool, tds *string) {
     var status string
