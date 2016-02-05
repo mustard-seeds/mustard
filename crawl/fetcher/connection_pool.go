@@ -66,9 +66,7 @@ func (c *ConnectionPool)Fetch(doc *proto.CrawlDoc) bool {
         if len(c.free) + len(c.busy) < *CONF.Crawler.FetchConnectionNum {
             // new dozen conns
             for i := 0;i < 10;i++ {
-                conn := &Connection{
-                    client: &http.Client{},
-                }
+                conn := NewConnection()
                 c.free = append(c.free, conn)
             }
         } else {
@@ -86,9 +84,9 @@ func (c *ConnectionPool)Fetch(doc *proto.CrawlDoc) bool {
         c.free = append(c.free, conn)
         delete(c.busy,conn)
         c.record[base.GetHostName(doc)] = time_util.GetCurrentTimeStamp()
+        doc.CrawlRecord.FetchUse = time_util.GetCurrentTimeStamp() - doc.CrawlRecord.FetchTime
         c.hold[base.GetHostName(doc)] = false
         c.output_chan <- doc
-        doc.CrawlRecord.FetchUse = time_util.GetCurrentTimeStamp() - doc.CrawlRecord.FetchTime
     })
     c.releaseRecordAndHold()
     return true

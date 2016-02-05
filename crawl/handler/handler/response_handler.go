@@ -10,6 +10,7 @@ type ResponseHandler struct {
     clients map[string]proto.CrawlServiceClient
 }
 func (doc *ResponseHandler)Init() bool {
+    //TODO response handler, add crawldoc sender
     return false
 }
 func (doc *ResponseHandler)Accept(crawlDoc *proto.CrawlDoc)bool {
