@@ -48,7 +48,7 @@ func (h *CrawlHandler)Status(s *string){
     if h.input_chan != nil {
         ins = fmt.Sprintf("%d",len(h.input_chan))
     }
-    string_util.StringAppendF(s, "(%s-%d/%d-%d/%d)", ins,
+    string_util.StringAppendF(s, "(%s)(%d/%d %d/%d)", ins,
         h.process_num, h.accept_num,
         h.avg_process_time, h.max_process_time)
 }

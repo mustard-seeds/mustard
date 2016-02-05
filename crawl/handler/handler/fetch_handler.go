@@ -6,37 +6,31 @@ import (
     "mustard/base/time_util"
     "mustard/base/string_util"
     "fmt"
+    "mustard/crawl/fetcher"
 )
 
 type FetchHandler struct {
     CrawlHandler
-    hostloader *HostLoader
-    conns   *ConnectionPool
+    hostloader *fetcher.HostLoader
+    conns   *fetcher.ConnectionPool
     // statistic
     sitequeuefull_num   int
 }
 func (h *FetchHandler)Status(s *string) {
     h.CrawlHandler.Status(s)
     if h.hostloader != nil && h.conns != nil {
-        string_util.StringAppendF(s,  "[(%d-%d)-(%d-%d)-%d]",
-            h.hostloader.Him(),
+        string_util.StringAppendF(s,  "[(%d/%d)(%d/%d)-%d]",
             h.hostloader.Uim(),
-            h.conns.BusyConnectionNum(),
+            h.hostloader.Him(),
             h.conns.FreeConnectionNum(),
-            len(h.conns.record))
+            h.conns.BusyConnectionNum(),
+            h.conns.RecordNum())
     }
 }
 func (h *FetchHandler)Init() bool {
     LOG.VLog(3).Debugf("FetcherHandler Init")
-    h.hostloader = &HostLoader{
-        hostMap: make(map[string]*HostLoadQueue),
-    }
-    h.conns = &ConnectionPool{
-        record : make(map[string]int64),
-        hold : make(map[string]bool),
-        busy : make(map[*Connection]bool),
-        output_chan : h.output_chan,
-    }
+    h.hostloader = fetcher.NewHostLoader()
+    h.conns = fetcher.NewConnectionPool(h.output_chan)
     return true
 }
 func (h *FetchHandler)Run(p CrawlProcessor) {

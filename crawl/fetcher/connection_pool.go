@@ -1,4 +1,4 @@
-package handler
+package fetcher
 
 import (
     LOG "mustard/base/log"
@@ -12,20 +12,6 @@ const (
     CONNECTION_POOL_RECOVER_INTERVAL = 3600
     CONNECTION_POOL_TIMEOUT = 3600
 )
-type Connection struct {
-    client  *http.Client
-}
-// http proxy
-// custom
-// timeout,connection/read
-// follow redirect?
-
-// run in goroutine
-func (c *Connection)FetchOne(doc *proto.CrawlDoc, f func(*proto.CrawlDoc, *Connection)) {
-    // TODO fetch doc and fill field
-    time_util.Sleep(3)
-    f(doc, c)
-}
 
 type ConnectionPool struct {
     record map[string]int64
@@ -42,6 +28,9 @@ func (c *ConnectionPool)SetOutChan(output_chan  chan<- *proto.CrawlDoc) {
 
 func (c *ConnectionPool)GetCrawlHostMap() map[string]int64 {
     return c.record
+}
+func (c *ConnectionPool)RecordNum() int{
+    return len(c.record)
 }
 func (c *ConnectionPool)FreeConnectionNum() int {
     return len(c.free)
@@ -103,4 +92,14 @@ func (c *ConnectionPool)Fetch(doc *proto.CrawlDoc) bool {
     })
     c.releaseRecordAndHold()
     return true
+}
+
+// constructor
+func NewConnectionPool(output_chan chan<- *proto.CrawlDoc) *ConnectionPool {
+    return &ConnectionPool{
+        record : make(map[string]int64),
+        hold : make(map[string]bool),
+        busy : make(map[*Connection]bool),
+        output_chan : output_chan,
+    }
 }

@@ -1,4 +1,4 @@
-package handler
+package fetcher
 
 import (
     LOG "mustard/base/log"
@@ -6,7 +6,9 @@ import (
     "mustard/crawl/proto"
     "errors"
     "mustard/base/time_util"
+    "mustard/base/conf"
 )
+var CONF = conf.Conf
 
 /*
     hostload and connection pool
@@ -106,5 +108,11 @@ func (hl *HostLoader)Travel(s map[string]int64, f func(*proto.CrawlDoc) bool) {
             delete(hl.hostMap, k)
         }
         LOG.VLog(3).Debugf("HostLoad release.%s",release)
+    }
+}
+
+func NewHostLoader() *HostLoader {
+    return &HostLoader{
+        hostMap: make(map[string]*HostLoadQueue),
     }
 }
