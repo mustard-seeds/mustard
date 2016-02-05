@@ -3,7 +3,6 @@ package fetcher
 import (
     LOG "mustard/base/log"
     "mustard/crawl/proto"
-    "net/http"
     "mustard/base/time_util"
     "mustard/crawl/base"
 )

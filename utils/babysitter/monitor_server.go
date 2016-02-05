@@ -6,10 +6,13 @@ import (
 	"fmt"
 	"mustard/base/string_util"
 	"encoding/json"
+	"strings"
+	"mustard/base"
 )
 
 const (
 	StatusUiPath = "/statusi"
+	StatusUiAPi =   "/statusi/api"
 	StatusUiAPIPath = "/statusi/api/machine"
 	StatusUiAPIHealthyPath = "/statusi/api/healthy"
 )
@@ -17,9 +20,6 @@ const (
 type MonitorInterface interface {
 	MonitorReport(*MonitorResult)
 	MonitorReportHealthy() error
-}
-type MonitorHandleFunc interface {
-	MHandleFunc(string, func(w http.ResponseWriter, r *http.Request))
 }
 type MonitorResult struct {
 	info    string
@@ -48,8 +48,10 @@ func (m *MonitorServer)Init() {
 func (m *MonitorServer)AddMonitor(mi MonitorInterface) {
 	m.monitor = mi
 }
-// custom handlerfunc.
+// TODO: custom handlerfunc test.... for dispatcher and fetcher add custom api func.
 func (m *MonitorServer)AddHandleFunc(path string, f http.HandlerFunc){
+	base.CHECK(strings.HasPrefix(path, "/"),"HandleFunc path should start with /")
+	path = StatusUiAPi + path
 	m.handleFunc[path] = f
 }
 func (m *MonitorServer)StatusiApi(w http.ResponseWriter, r *http.Request) {

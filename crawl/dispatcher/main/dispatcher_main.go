@@ -38,6 +38,8 @@ func main() {
 	http_server.Init()
 
 	http_server.AddMonitor(disp)
+	// TODO add dispatcher handleFunc
+	// http_server.AddHandleFunc("/xxx", disp.XXX)
 	go http_server.Serve(*CONF.Crawler.HttpPort)
 
 	pb.RegisterCrawlServiceServer(grpcServer, disp)

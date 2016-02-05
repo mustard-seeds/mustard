@@ -31,9 +31,7 @@ const (
 
     kPortStep = 50
 )
-// send crawldoc to target server
 // dispatch as:  host/domain/url/random
-// remotes:  crawldoc.receivers or configfile.
 type CrawlerFeeder struct {
     host string
     port int
