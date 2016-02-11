@@ -15,8 +15,9 @@ import (
 var CONF = conf.Conf
 
 type CrawlHandlerController struct {
-     InputProcessors []handler.CrawlTask
-     ProcessChain []handler.CrawlTask
+    InputProcessors []handler.CrawlTask
+    ProcessChain []handler.CrawlTask
+    inited  bool
 }
 func (c *CrawlHandlerController)getOutputStat(stat *string, separatorLine, separatorColumn string) {
     *stat = separatorLine + "InputProcessors" + separatorLine
@@ -35,6 +36,7 @@ func (c *CrawlHandlerController)getOutputStat(stat *string, separatorLine, separ
     }
 }
 func (d *CrawlHandlerController)MonitorReportHealthy() error {
+    // TODO: handler healthy defination...
     return nil
 }
 func (c *CrawlHandlerController)MonitorReport(result *babysitter.MonitorResult) {
@@ -43,8 +45,8 @@ func (c *CrawlHandlerController)MonitorReport(result *babysitter.MonitorResult) 
     c.getOutputStat(&stat, "<br>", "<br>")
     result.AddString(stat)
 }
-func (c *CrawlHandlerController)InitCrawlService() {
-    for _,name := range strings.Split(*CONF.Crawler.CrawlHandlerChain,";") {
+func (c *CrawlHandlerController)initServiceInternal() {
+     for _,name := range strings.Split(*CONF.Crawler.CrawlHandlerChain,";") {
         LOG.Infof("%s Join Crawl Handler Chain", name)
         h := handler.GetCrawlHandlerByName(name)
         if h == nil {
@@ -73,6 +75,8 @@ func (c *CrawlHandlerController)InitCrawlService() {
         c.ProcessChain[i].SetInputChan(out)
     }
     c.ProcessChain[len(c.ProcessChain)-1].SetOutputChan(nil)
+}
+func (c *CrawlHandlerController)startServiceInterval() {
     for _,p := range c.ProcessChain {
         LOG.Infof("%s Start to Run", reflect.TypeOf(p))
         base.CHECK(p.Init(),"%s Init Fail",reflect.TypeOf(p))
@@ -84,8 +88,16 @@ func (c *CrawlHandlerController)InitCrawlService() {
         go r.Run(r.(handler.CrawlProcessor))
     }
 }
+func (c *CrawlHandlerController)InitCrawlService() {
+    if c.inited == true {
+        base.CHECK(false, "Handler Controller should only Init Once.")
+    }
+    c.inited = true
+    c.initServiceInternal()
+    c.startServiceInterval()
+}
 func (c *CrawlHandlerController)PrintStatus() {
     stat := ""
     c.getOutputStat(&stat, "\n", "   ")
-    LOG.VLog(3).Debug(stat)
+    LOG.VLog(2).Debug(stat)
 }

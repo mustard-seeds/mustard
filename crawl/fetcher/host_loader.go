@@ -15,6 +15,7 @@ var CONF = conf.Conf
 */
 type HostLoadQueue struct {
     hosts []*proto.CrawlDoc
+    capacity    int
 }
 func (hlq *HostLoadQueue)Top() (*proto.CrawlDoc,error) {
     if hlq.Empty() {
@@ -40,7 +41,7 @@ func (hlq *HostLoadQueue)Pop() (*proto.CrawlDoc,error) {
     return t,e
 }
 func (hlq *HostLoadQueue)Full() bool {
-    return hlq.Size() > *CONF.Crawler.HostLoaderQueueSize
+    return hlq.Size() > hlq.capacity
 }
 func (hlq *HostLoadQueue)Empty() bool {
     return 0 == hlq.Size()
@@ -72,7 +73,7 @@ func (hl *HostLoader)Push(doc *proto.CrawlDoc) error {
             q.Push(doc)
         }
     } else {
-        hl.hostMap[host] = &HostLoadQueue{}
+        hl.hostMap[host] = newHostLoadQueue()
         hl.hostMap[host].Push(doc)
     }
     return nil
@@ -114,5 +115,10 @@ func (hl *HostLoader)Travel(s map[string]int64, f func(*proto.CrawlDoc) bool) {
 func NewHostLoader() *HostLoader {
     return &HostLoader{
         hostMap: make(map[string]*HostLoadQueue),
+    }
+}
+func newHostLoadQueue() *HostLoadQueue {
+    return &HostLoadQueue{
+        capacity:*CONF.Crawler.HostLoaderQueueSize,
     }
 }

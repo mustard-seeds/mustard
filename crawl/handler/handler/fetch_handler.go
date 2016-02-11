@@ -5,7 +5,6 @@ import (
     "mustard/crawl/proto"
     "mustard/base/time_util"
     "mustard/base/string_util"
-    "fmt"
     "mustard/crawl/fetcher"
 )
 
@@ -53,7 +52,6 @@ func (h *FetchHandler)Run(p CrawlProcessor) {
         default:
             time_util.Sleep(1)
         }
-        fmt.Println()
         h.hostloader.Travel(h.conns.GetCrawlHostMap(), func(doc *proto.CrawlDoc) bool{
             // travel will return the reach time doc. then use connections to fetch.
             // if can not fetch, will return false, then hostloader will not delete it
