@@ -13,8 +13,9 @@ enum ReturnType {
     BADHEADER               = 7;
 //    NETWORKERROR            = 8;
     SITEQUEUEFULLFETCHER    = 9;
-//    INVALIDURL              = 10;
-//    INVALIDREDIRECTURL      = 11;
+    // url format is not avaliable  crawl/base/utils.IsInvalidUrl()
+    INVALIDURL              = 10;
+    INVALIDREDIRECTURL      = 11;
 //    META_REDIRECT           = 12;
 //    JS_REDIRECT             = 13;
 //    IP_BLACKLISTED          = 14;
@@ -70,7 +71,9 @@ enum ReturnType {
     STATUS509 = 509;
     STATUS510 = 510;
 }
+
 // tag for source. you can custom
+// like primary_tag and second_tag
 enum RequestType {
     TESTING     = 0;
     GENERAL     = 1;
@@ -81,20 +84,24 @@ enum Priority {
     URGENT  =   1;
 }
 
+// generate from page analysis
 enum DocType {
     NORMALDOC      =   0;
     WEB_MAIN    =   1;
     WEB_HUB     =   2;
     WEB_CONTENT =   3;
 }
+
 message ConnectionInfo {
     string host = 1;
     int32  port = 2;
 }
+
 message OutLink {
     string  url  = 1;
     string  text = 2;
 }
+
 message FetchHint {
     string host =   1;
     string path =   2;
@@ -102,6 +109,7 @@ message FetchHint {
     int32   port    =   4;
     string post_data = 5;
 }
+
 message CrawlRecord {
     int64   request_time    = 1;
     ConnectionInfo fetcher  = 2;
@@ -109,21 +117,30 @@ message CrawlRecord {
     int64   fetch_time      = 3;
     int64   fetch_use       = 4;
 }
+
 message CrawlParam {
     Priority    pri         =   1;
     int32   hostload        =   2;
     int32    random_hostload =   3;
     int32   fetcher_count   =   4;  // for multi fetcher, default should set 1
     bool    drop_content    =   5;
+
     string  store_engine    =   7;
     string  store_db        =   8;
     string  store_table     =   9;
+
     string  fake_host       =   10;
-    RequestType rtype       =   11;
-    FetchHint fetch_hint    =   12;
-    repeated ConnectionInfo receivers   = 13;
-    string primary_tag = 14;
-    repeated string secondary_tag = 15;
+    FetchHint fetch_hint    =   11;
+    repeated ConnectionInfo receivers   = 12;
+
+    string refer = 20;
+    bool    custom_ua   =   21;
+    bool    use_proxy   =   22;
+    bool    follow_redirect =   23;
+
+    RequestType rtype       =   101;
+    string primary_tag = 102;
+    repeated string secondary_tag = 103;
 }
 
 message CrawlHistory {
@@ -157,7 +174,7 @@ message CrawlDoc {
     string  header  =   18;
     int64 time_used = 19;
     string reservation = 20;
-    DocType dtype           =   21;
+//    DocType dtype           =   21;
 
     CrawlParam  crawl_param = 50;
     CrawlRecord crawl_record = 60;

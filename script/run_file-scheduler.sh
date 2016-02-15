@@ -100,6 +100,8 @@ check() {
 start() {
   # clear log...
   rm $LOG_FILE
+  # open gctrace.
+  export GODEBUG=gctrace=1
   echo $CMD
   nohup $CMD >> $LOG_FILE 2>&1 &
   check
@@ -113,11 +115,11 @@ start() {
 }
 
 stop() {
-  echo "Stop: `basename $BIN` port: $HPORT"
   checkOnce
   if [ $? -eq 0 ];then
     pid=`ps -ef |grep "$BIN"|grep $HPORT|awk '{print $2}'`
     kill -9 $pid
+    echo "Stop: `basename $BIN` port: $HPORT PID:$pid"
   else
     echo "Process Not exist. `basename $BIN` port: $HPORT"
   fi

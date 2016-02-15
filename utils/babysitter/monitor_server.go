@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"strings"
 	"mustard/base"
+	_ "net/http/pprof"
 )
 
 const (
@@ -117,6 +118,10 @@ func (m *MonitorServer)Serve(port int) {
 	}
 	serverAddr := fmt.Sprintf(":%d", port)
 	LOG.Infof("Starting Http Monitor at %d", port)
+
+	// AttachProfiler http://stackoverflow.com/questions/19591065/profiling-go-web-application-built-with-gorillas-mux-with-net-http-pprof
+	r.PathPrefix("/debug/pprof/").Handler(http.DefaultServeMux)
+
 	err := http.ListenAndServe(serverAddr, r)
 	if (err != nil) {
 		LOG.Fatalf("Http Server Start Fail,%d",port)

@@ -18,6 +18,7 @@ func (request *DummyRequestProcessor)Run(p CrawlProcessor) {
         doc.CrawlParam.FetchHint = new(proto.FetchHint)
         doc.CrawlParam.FetchHint.Host = "a.com"
         doc.CrawlParam.Hostload = 5
+        doc.CrawlRecord = new(proto.CrawlRecord)
         time.Sleep(time.Second)
         request.Output(doc)
         LOG.Info("Send one request")

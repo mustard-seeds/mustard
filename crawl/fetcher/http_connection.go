@@ -8,6 +8,11 @@ import (
     "net"
     "errors"
 )
+const (
+    BROWSER_UA = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.111 Safari/537.36"
+    CONNECTION_TIMEOUT time.Duration = time.Duration(3) * time.Second
+    READ_TIMEOUT       time.Duration = time.Duration(30) * time.Second
+)
 
 var GeneralHeader = map[string]string {
     "Accept":"text/html;q=0.8, */*;q=0.5",
@@ -39,14 +44,20 @@ type Connection struct {
 // cookie
 // encode...
 // header...
+// proxy
+// user agent
 // Vlog4 print debug info -- format...
+// support https.
 
 // CODE -- match info
 //  connect timeout -- NOCONNECTION
 //  readwrite timeout -- TIMEOUT
 //  302 redirect no url or no header. -- BADHEADER
 
-
+// http://stackoverflow.com/questions/23297520/how-can-i-make-the-go-http-client-not-follow-redirects-automatically
+func noRedirect(req *http.Request, via []*http.Request) error {
+    return errors.New("Don't redirect!")
+}
 
 func (c *Connection)TimeoutDialer(to *FetchTimeout) func(net, addr string) (c net.Conn, err error) {
     return nil

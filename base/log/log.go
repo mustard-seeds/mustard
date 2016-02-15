@@ -5,6 +5,8 @@ import (
     "log"
     "fmt"
     "os"
+    "flag"
+    "strings"
     "mustard/base/conf"
 )
 
@@ -99,6 +101,32 @@ func init() {
         writer = io.MultiWriter(writer, os.Stdout)
     }
     _log.logI = log.New(writer, "", log.LstdFlags|log.Lshortfile)
+    // dump flags in log, because of dependency cycle
+    dumpFlags()
+}
+
+
+func escapeUsage(s string) string {
+    return strings.Replace(s, "\n", "\n    # ", -1)
+}
+
+func quoteValue(v string) string {
+    if !strings.ContainsAny(v, "\n#;") && strings.TrimSpace(v) == v {
+        return v
+    }
+    v = strings.Replace(v, "\\", "\\\\", -1)
+    v = strings.Replace(v, "\n", "\\n", -1)
+    v = strings.Replace(v, "\"", "\\\"", -1)
+    return fmt.Sprintf("\"%s\"", v)
+}
+func dumpFlags() {
+    Info("=================Dump Flags=========================================")
+    flag.VisitAll(func(f *flag.Flag) {
+        if f.Name != "config" && f.Name != "dumpflags" {
+            Infof("%s = %s # %s\n", f.Name, quoteValue(f.Value.String()), escapeUsage(f.Usage))
+        }
+    })
+    Info("=================Dump Flags Finish===================================")
 }
 // test
 /*
