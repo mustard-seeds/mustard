@@ -23,18 +23,15 @@ var GeneralHeader = map[string]string {
 //    "Connection":"keep-alive",
 	"User-Agent":"MustardSpider",
 }
-// Referer:
-// Authorization: Basic
-// Cookie:
+
 
 type FetchTimeout struct {
     connect     time.Duration
     readwrite   time.Duration
 }
 
-
 type Connection struct {
-    client  *http.Client
+    httpProxy *ProxyManager
 }
 // use proxy or not.
 // custom
@@ -42,6 +39,7 @@ type Connection struct {
 // follow redirect?
 // basic auth
 // cookie
+// referer
 // encode...
 // header...
 // proxy
@@ -54,21 +52,20 @@ type Connection struct {
 //  readwrite timeout -- TIMEOUT
 //  302 redirect no url or no header. -- BADHEADER
 
-// http://stackoverflow.com/questions/23297520/how-can-i-make-the-go-http-client-not-follow-redirects-automatically
-func noRedirect(req *http.Request, via []*http.Request) error {
-    return errors.New("Don't redirect!")
-}
-
 func (c *Connection)TimeoutDialer(to *FetchTimeout) func(net, addr string) (c net.Conn, err error) {
     return nil
 }
+// http://stackoverflow.com/questions/23297520/how-can-i-make-the-go-http-client-not-follow-redirects-automatically
 func (c *Connection)noRedirect(req *http.Request, via []*http.Request) error {
     return errors.New("No Redirect")
 }
 // run in goroutine
 func (c *Connection)FetchOne(doc *pb.CrawlDoc, f func(*pb.CrawlDoc, *Connection)) {
     // TODO fetch doc and fill field
-    time_util.Sleep(3)
+    // step 1. fill equest info
+    // step 2. fetch
+    // step 3. judge response code and fill the nessary field of crawldoc
+    // the last step: call the callback function.
     f(doc, c)
 }
 
@@ -81,6 +78,10 @@ func (c *Connection)Handle30X(resp *http.Response, doc *pb.CrawlDoc) {
 
 func NewConnection() *Connection {
     return &Connection{
-        client: &http.Client{},
+        httpProxy:NewProxyManager(PROXY_SELECT_RANDOM),
     }
+}
+
+
+type HttpClientGenerator struct {
 }

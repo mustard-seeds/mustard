@@ -23,8 +23,9 @@ func LoadConfigWithTwoField(name,filename,splitS string, last_load_time *int64) 
             LOG.Errorf("%s Load Config Format Error, %s : %s", name, filename,line)
             return
         }
-        result[addr[0]] = addr[1]
-        LOG.VLog(4).Debugf("Load %s  %s : %s", name, addr[0], addr[1])
+        addr0 := strings.TrimSpace(addr[0])
+        result[addr0] = addr[1]
+        LOG.VLog(4).Debugf("Load %s  %s : %s", name, addr0, addr[1])
     })
     return result,true
 }

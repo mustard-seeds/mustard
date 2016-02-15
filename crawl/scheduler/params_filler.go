@@ -169,7 +169,7 @@ func (h *HostLoadParamFiller)loadHostloadConfigFile() {
             hl,err := strconv.Atoi(v)
             if err != nil {
                 LOG.Errorf("Load Config Atoi Error, %s %s:%s", fname, k,v)
-                return
+                continue
             }
             h.hostload[k] = hl
             LOG.VLog(3).Debugf("Load HostLoad %s : %d", k, hl)
@@ -206,7 +206,7 @@ func (f *MultiFetcherParamFiller)loadMultiFetcherConfigFile() {
             hl,err := strconv.Atoi(v)
             if err != nil {
                 LOG.Errorf("Load Config Atoi Error, %s %s:%s", fname, k,v)
-                return
+                continue
             }
             f.multifetcher[k] = hl
             LOG.VLog(3).Debugf("Load Multifetcher %s : %d", k, hl)
@@ -243,7 +243,7 @@ func (f *ReceiverParamFiller)loadReceiverConfigFile() {
             hl,err := strconv.Atoi(v)
             if err != nil {
                 LOG.Errorf("Load Config Atoi Error, %s %s:%s", fname, k,v)
-                return
+                continue
             }
             f.receivers[k+":"+v] = &pb.ConnectionInfo{Host:k,Port:int32(hl)}
             LOG.VLog(3).Debugf("Load receivers %s : %d", k, hl)

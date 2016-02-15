@@ -32,6 +32,8 @@ type CrawlerType struct {
     // scheduler
     UrlScheduleFile     *string
     DefaultSendSpeed    *int
+    // fetcher
+    ProxyConfFile   *string
 }
 
 var CrawlerConf = CrawlerType{
@@ -61,4 +63,5 @@ var CrawlerConf = CrawlerType{
     ConfigFileReloadInterval:flag.Int("config_file_reload_interval",1800, "config file reload interval"),
     UrlScheduleFile:flag.String("schedule_file","","each line is a url"),
     DefaultSendSpeed:flag.Int("default_send_speed",5,"default send speed for crawldocsender"),
+    ProxyConfFile:flag.String("proxy_conf_file","etc/crawl/fetch_proxys.config","each line is a proxy host:port"),
 }
