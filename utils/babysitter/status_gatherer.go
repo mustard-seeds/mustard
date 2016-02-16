@@ -4,6 +4,7 @@ import (
 	"mustard/base/string_util"
 	"fmt"
 	"strings"
+	"mustard/base/time_util"
 )
 func machineInfo() map[string]string {
 	//TODO pid,cmd, cpunum,total mem, ip port hostname, uptime,
@@ -12,7 +13,7 @@ func machineInfo() map[string]string {
 	machine["pid"] = fmt.Sprintf("%d",os.Getpid())
 	machine["uid"] = fmt.Sprintf("%d",os.Getuid())
 	machine["hostname"],_ = os.Hostname()
-
+	machine["StartAt"] = time_util.GetReadableTimeNow()
 	return machine
 }
 func statusInfo() map[string]string {

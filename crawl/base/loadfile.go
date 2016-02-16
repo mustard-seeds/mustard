@@ -14,6 +14,7 @@ func LoadConfigWithTwoField(name,filename,splitS string, last_load_time *int64) 
     if time_util.GetCurrentTimeStamp() - *last_load_time < int64(*CONF.Crawler.ConfigFileReloadInterval) {
         return nil,false
     }
+    filename = file.GetConfFile(filename)
     result := make(map[string]string)
     *last_load_time = time_util.GetCurrentTimeStamp()
     LOG.Infof("Load Config %s",*CONF.Crawler.HostLoadConfigFile)

@@ -66,8 +66,9 @@ LOG_FILE=$LOG_PATH/`basename $BIN`.log
 mkdir -p  $LOG_PATH
 
 CMD="$BIN
-    --crawl_handler_chain=FetchHandler;DocHandler;StorageHandler
+    --crawl_handler_chain=FetchHandler;PrepareHandler;DocHandler;StorageHandler
     --crawl_input_processor=RequestProcessor
+    --proxy_conf_file=etc/crawl/fetch_proxys.config
     --channel_buffer_size=10
     --host_load_queue_size=10
     --fetch_connection_number=20

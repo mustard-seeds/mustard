@@ -33,6 +33,10 @@ type JobDescription struct {
     storeDb         string
     storeTable      string
     requestType     int
+    referer         string
+    custom_ua       bool
+    follow_redirect bool
+    use_proxy       bool
 }
 
 var NormalJobD = JobDescription{
@@ -41,6 +45,9 @@ var NormalJobD = JobDescription{
     randomHostLoad:0,
     dropContent:false,
     requestType:1,
+    use_proxy:false,
+    custom_ua:true,
+    follow_redirect:false,
 }
 
 var UrgentJobD = JobDescription{
@@ -287,6 +294,12 @@ func (h *TagParamFiller)Fill(jd *JobDescription, doc *pb.CrawlDoc) {
     if doc.CrawlParam.Rtype == 0 {
         doc.CrawlParam.Rtype = pb.RequestType(jd.requestType)
     }
+    if doc.CrawlParam.Referer != "" {
+        doc.CrawlParam.Referer = jd.referer
+    }
+    doc.CrawlParam.CustomUa = jd.custom_ua
+    doc.CrawlParam.FollowRedirect = jd.follow_redirect
+    doc.CrawlParam.UseProxy = jd.use_proxy
     // storage
     if doc.CrawlParam.StoreEngine == "" {
         doc.CrawlParam.StoreEngine = jd.storeEngine

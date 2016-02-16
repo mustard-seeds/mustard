@@ -105,9 +105,9 @@ message OutLink {
 message FetchHint {
     string host =   1;
     string path =   2;
-    int32   ip  =   3;
-    int32   port    =   4;
-    string post_data = 5;
+    // int32   ip  =   3;
+    // int32   port    =   4;
+    // string post_data = 5;
 }
 
 message CrawlRecord {
@@ -121,19 +121,19 @@ message CrawlRecord {
 message CrawlParam {
     Priority    pri         =   1;
     int32   hostload        =   2;
-    int32    random_hostload =   3;
-    int32   fetcher_count   =   4;  // for multi fetcher, default should set 1
+    int32    random_hostload =  3;
+    int32   fetcher_count   =   4;  // for multi fetcher, default should set 1, come from config file.
     bool    drop_content    =   5;
 
     string  store_engine    =   7;
     string  store_db        =   8;
     string  store_table     =   9;
 
-    string  fake_host       =   10;
+    string  fake_host       =   10;  // filll from config file
     FetchHint fetch_hint    =   11;
-    repeated ConnectionInfo receivers   = 12;
+    repeated ConnectionInfo receivers   = 12; // fill from config file
 
-    string refer = 20;
+    string referer = 20;
     bool    custom_ua   =   21;
     bool    use_proxy   =   22;
     bool    follow_redirect =   23;
@@ -152,29 +152,37 @@ message CrawlDoc {
     string  request_url = 2;
     // url use to crawl. it's generated base on request url
     string  url = 3;
+
+    // fill at fetcher, http response information
     string redirect_url = 4;
     ReturnType  code    =   5;
-    string  content =   6;
-    bool    content_compressed  =   7;
-    repeated OutLink    indomain_outlinks = 9;
-    repeated OutLink    outdomain_outlinks = 10;
+    // record error.Errors.
+    string error_info   =   6;
+    string  content =   7;
+    // compress at storage handler.
+    bool    content_compressed  = 8;
+    // response header.
+    string  header  =   9;
+    string last_modify = 10;
+    // content type of the page, eg text/html
+    string content_type = 11;
+
+
+    repeated OutLink    indomain_outlinks = 30;
+    repeated OutLink    outdomain_outlinks = 31;
     // content hash(128 bit)
-    int64 chash_0   =   11;
-    int64 chash_1   =   12;
+    int64 chash_0   =   32;
+    int64 chash_1   =   33;
     // original encoding which is deteched by the page content
-    int32 orig_encoding   = 13;
+    int32 orig_encoding   = 34;
     // encoding after convert to utf8
     // the same with orig_encoding if convert fail
     // utf8 if convert success
-    int32 conv_encoding =   14;
+    int32 conv_encoding =   35;
     // language the page is detected to
-    int32 language = 15;
-    // content type of the page, eg text/html
-    string content_type = 16;
-    string  header  =   18;
-    int64 time_used = 19;
-    string reservation = 20;
-//    DocType dtype           =   21;
+    int32 language = 36;
+
+    string reservation = 40;
 
     CrawlParam  crawl_param = 50;
     CrawlRecord crawl_record = 60;

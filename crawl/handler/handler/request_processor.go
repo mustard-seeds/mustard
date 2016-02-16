@@ -10,6 +10,7 @@ import (
     "mustard/internal/google.golang.org/grpc"
     "mustard/internal/google.golang.org/grpc/credentials"
     "mustard/base/string_util"
+    "mustard/crawl/base"
 )
 
 type RequestProcessor struct {
@@ -21,6 +22,7 @@ func (request *RequestProcessor)Feed(ctx context.Context, docs *pb.CrawlDocs) (*
     if healthy {
         for _,doc := range docs.Docs {
             LOG.VLog(4).Debugf("Get doc %s,type:%d",doc.RequestUrl, doc.CrawlParam.Rtype)
+            LOG.VLog(4).Debugf("DumpDoc:\n%s",base.DumpCrawlDoc(doc))
             //request.Output(doc)
             request.output_chan <- doc
             request.CrawlHandler.process_num++

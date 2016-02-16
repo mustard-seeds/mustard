@@ -33,7 +33,7 @@ type ProxyManager struct {
 }
 func (p *ProxyManager)loadConf() {
     fname := *CONF.Crawler.ProxyConfFile
-    result,fresh := crawl_base.LoadConfigWithTwoField("HostLoad", fname, ":", &p.last_load_time)
+    result,fresh := crawl_base.LoadConfigWithTwoField("ProxyConf", fname, ":", &p.last_load_time)
     if fresh {
         p.deads = nil
         p.alives = nil
@@ -72,7 +72,7 @@ func (p *ProxyManager)GetProxyUrl() (*url.URL, error) {
 }
 func (p *ProxyManager)randomProxyUrl() (*url.URL,error) {
     if len(p.alives) == 0 {
-        return _,errors.New("No Alive Proxy")
+        return nil,errors.New("No Alive Proxy")
     }
     id := rand.Intn(len(p.alives))
     rawUrl := fmt.Sprintf("http://%s", p.alives[id])
@@ -80,14 +80,14 @@ func (p *ProxyManager)randomProxyUrl() (*url.URL,error) {
 }
 func (p *ProxyManager)rrProxyUrl() (*url.URL, error) {
     if len(p.alives) == 0 {
-        return _,errors.New("No Alive Proxy")
+        return nil,errors.New("No Alive Proxy")
     }
     id := p.index % len(p.alives)
     p.index = (p.index + 1) % len(p.alives)
     rawUrl := fmt.Sprintf("http://%s", p.alives[id])
     return url.Parse(rawUrl)
 }
-func NewProxyManager(mode SelectMode) {
+func NewProxyManager(mode SelectMode) *ProxyManager{
     p := &ProxyManager{
         mode:mode,
         index:0,

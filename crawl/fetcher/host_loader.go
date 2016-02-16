@@ -7,6 +7,7 @@ import (
     "errors"
     "mustard/base/time_util"
     "mustard/base/conf"
+    "math/rand"
 )
 var CONF = conf.Conf
 
@@ -95,7 +96,7 @@ func (hl *HostLoader)Travel(s map[string]int64, f func(*proto.CrawlDoc) bool) {
         }
         now := time_util.GetCurrentTimeStamp()
         doc,_ := v.Top()
-        if now - s[base.GetHostName(doc)] > int64(doc.CrawlParam.Hostload) {
+        if now - s[base.GetHostName(doc)] > int64(int(doc.CrawlParam.Hostload) + rand.Intn(1 + int(doc.CrawlParam.RandomHostload))) {
             if f(doc) {
                 v.Pop()
             }
