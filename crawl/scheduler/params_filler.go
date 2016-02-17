@@ -10,6 +10,7 @@ import (
     "regexp"
     crawl_base "mustard/crawl/base"
     "mustard/base/file"
+    "encoding/json"
 )
 var CONF = conf.Conf
 /*
@@ -24,38 +25,38 @@ store db,table
 request type
 */
 type JobDescription struct {
-    isUrgent        bool
-    primeTag        string
-    secondTag       []string
-    randomHostLoad  int
-    dropContent     bool
-    storeEngine     string
-    storeDb         string
-    storeTable      string
-    requestType     int
-    referer         string
-    custom_ua       bool
-    follow_redirect bool
-    use_proxy       bool
+    IsUrgent        bool        `json:"isUrgent,omitempty"`
+    PrimeTag        string      `json:"primeTag,omitempty"`
+    SecondTag       []string    `json:"secondTag,omitempty"`
+    RandomHostLoad  int         `json:"randomHostLoad,omitempty"`
+    DropContent     bool        `json:"dropContent,omitempty"`
+    StoreEngine     string      `json:"storeEngine,omitempty"`
+    StoreDb         string      `json:"storeDb,omitempty"`
+    StoreTable      string      `json:"storeTable,omitempty"`
+    RequestType     int         `json:"requestType,omitempty"`
+    Referer         string      `json:"referer,omitempty"`
+    Custom_ua       bool        `json:"custom_ua,omitempty"`
+    Follow_redirect bool        `json:"follow_redirect,omitempty"`
+    Use_proxy       bool        `json:"use_proxy,omitempty"`
 }
 
 var NormalJobD = JobDescription{
-    isUrgent:false,
-    primeTag:"n",
-    randomHostLoad:0,
-    dropContent:false,
-    requestType:1,
-    use_proxy:false,
-    custom_ua:true,
-    follow_redirect:false,
+    IsUrgent:false,
+    PrimeTag:"n",
+    RandomHostLoad:0,
+    DropContent:false,
+    RequestType:1,
+    Use_proxy:false,
+    Custom_ua:true,
+    Follow_redirect:false,
 }
 
 var UrgentJobD = JobDescription{
-    isUrgent:true,
-    primeTag:"U",
-    randomHostLoad:0,
-    dropContent:false,
-    requestType:1,
+    IsUrgent:true,
+    PrimeTag:"U",
+    RandomHostLoad:0,
+    DropContent:false,
+    RequestType:1,
 }
 type ParamFillerMaster struct {
     fillers ParamFillerGroup
@@ -278,36 +279,46 @@ func (h *TagParamFiller)Init() {
 }
 func (h *TagParamFiller)Fill(jd *JobDescription, doc *pb.CrawlDoc) {
     doc.CrawlParam.Pri = pb.Priority_NORMAL
-    if jd.isUrgent {
+    if jd.IsUrgent {
         doc.CrawlParam.Pri = pb.Priority_URGENT
     }
     if doc.CrawlParam.PrimaryTag == "" {
-        doc.CrawlParam.PrimaryTag = jd.primeTag
+        doc.CrawlParam.PrimaryTag = jd.PrimeTag
     }
-    for _,v := range jd.secondTag {
+    for _,v := range jd.SecondTag {
         doc.CrawlParam.SecondaryTag = append(doc.CrawlParam.SecondaryTag,v)
     }
     if doc.CrawlParam.RandomHostload == 0 {
-        doc.CrawlParam.RandomHostload = int32(jd.randomHostLoad)
+        doc.CrawlParam.RandomHostload = int32(jd.RandomHostLoad)
     }
-    doc.CrawlParam.DropContent = jd.dropContent
+    doc.CrawlParam.DropContent = jd.DropContent
     if doc.CrawlParam.Rtype == 0 {
-        doc.CrawlParam.Rtype = pb.RequestType(jd.requestType)
+        doc.CrawlParam.Rtype = pb.RequestType(jd.RequestType)
     }
     if doc.CrawlParam.Referer != "" {
-        doc.CrawlParam.Referer = jd.referer
+        doc.CrawlParam.Referer = jd.Referer
     }
-    doc.CrawlParam.CustomUa = jd.custom_ua
-    doc.CrawlParam.FollowRedirect = jd.follow_redirect
-    doc.CrawlParam.UseProxy = jd.use_proxy
+    doc.CrawlParam.CustomUa = jd.Custom_ua
+    doc.CrawlParam.FollowRedirect = jd.Follow_redirect
+    doc.CrawlParam.UseProxy = jd.Use_proxy
     // storage
     if doc.CrawlParam.StoreEngine == "" {
-        doc.CrawlParam.StoreEngine = jd.storeEngine
+        doc.CrawlParam.StoreEngine = jd.StoreEngine
     }
     if doc.CrawlParam.StoreDb == "" {
-        doc.CrawlParam.StoreDb = jd.storeDb
+        doc.CrawlParam.StoreDb = jd.StoreDb
     }
     if doc.CrawlParam.StoreTable == "" {
-        doc.CrawlParam.StoreTable = jd.storeTable
+        doc.CrawlParam.StoreTable = jd.StoreTable
     }
+}
+
+func GetJobDescriptionFromFile(filename string) *JobDescription {
+    c,e := file.ReadFileToString(filename)
+    base.CHECKERROR(e, "read file %s", filename)
+    var jd JobDescription
+    e = json.Unmarshal([]byte(c),&jd)
+    base.CHECKERROR(e, "UnMarshal Error From %s", filename)
+    LOG.Infof("Load JobDescription from %s : %+v", filename, jd)
+    return &jd
 }

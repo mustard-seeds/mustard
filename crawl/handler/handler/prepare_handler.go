@@ -15,6 +15,7 @@ func (doc *PrepareHandler)Accept(crawlDoc *proto.CrawlDoc) bool {
 }
 func (doc *PrepareHandler)Process(crawlDoc *proto.CrawlDoc) {
     LOG.VLog(4).Debugf("\n%s", base.DumpCrawlDoc(crawlDoc))
+    // dump unicode content..
     LOG.VLog(4).Debugf("Content:\n%U", crawlDoc.Content)
     //TODO format, encode... exchange
 }

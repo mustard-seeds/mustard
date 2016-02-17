@@ -19,7 +19,7 @@ func main() {
 
 	// params filler init
 	filler := scheduler.ParamFillerMaster{}
-	filler.RegisterJobDescription(&scheduler.NormalJobD)
+	filler.RegisterJobDescription(scheduler.GetJobDescriptionFromFile(*CONF.Crawler.JobDescriptionConfFile))
 	filler.RegisterParamFillerGroup(&scheduler.DefaultParamFillerGroup{})
 	filler.Init()
 

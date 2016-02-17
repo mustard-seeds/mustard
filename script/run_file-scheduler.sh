@@ -76,6 +76,7 @@ CMD="$BIN
     --default_hostload=5
     --config_file_reload_interval=60
     --schedule_file=/Users/glc/workspace/1.url
+    --job_description_conf_file=etc/crawl/job_description.json
     --default_send_speed=4
     --conf_path_prefix=$MDATA
     --http_port=$HPORT

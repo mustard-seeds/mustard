@@ -23,7 +23,7 @@ func GetURLObj(_url string) *url.URL {
 	return u
 }
 func NormalizeUrl(_url string) string {
-	normal_url, err := purell.NormalizeURLString(_url, purell.FlagsUsuallySafeGreedy|purell.FlagRemoveFragment)
+	normal_url, err := purell.NormalizeURLString(_url, purell.FlagsSafe|purell.FlagRemoveDotSegments|purell.FlagRemoveFragment)
 	if err != nil {
 		return ""
 	}

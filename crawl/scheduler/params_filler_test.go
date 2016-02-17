@@ -73,7 +73,7 @@ func TestTagParamFiller(t *testing.T) {
 	if doc.CrawlParam.Pri != pb.Priority_NORMAL {
 		t.Error("TagParamFiller Not Fill Priority")
 	}
-	if doc.CrawlParam.PrimaryTag != NormalJobD.primeTag {
+	if doc.CrawlParam.PrimaryTag != NormalJobD.PrimeTag {
 		t.Error("TagParamFiller Not Fill pri tag")
 	}
 	doc.CrawlParam.PrimaryTag = "XXX"
