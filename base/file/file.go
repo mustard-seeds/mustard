@@ -17,6 +17,9 @@ func ReadFileToString(name string) (string, error) {
 	content, err := ioutil.ReadFile(name)
 	return string(content),err
 }
+func WriteStringToFile(content,name string) error {
+	return ioutil.WriteFile(name, []byte(content), 0644)
+}
 func Exist(name string) bool {
 	_,err := os.Stat(name)
 	return !os.IsNotExist(err)

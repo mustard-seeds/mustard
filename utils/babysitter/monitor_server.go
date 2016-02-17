@@ -9,6 +9,7 @@ import (
 	"strings"
 	"mustard/base"
 	_ "net/http/pprof"
+	"net"
 )
 
 const (
@@ -16,6 +17,7 @@ const (
 	StatusUiAPi =   "/statusi/api"
 	StatusUiAPIPath = "/statusi/api/machine"
 	StatusUiAPIHealthyPath = "/statusi/api/healthy"
+	PprofDebugPath = "/debug/pprof/"
 )
 
 type MonitorInterface interface {
@@ -82,8 +84,10 @@ func (m *MonitorServer)StatusiHealthyApi(w http.ResponseWriter, r *http.Request)
 	w.Write(info)
 }
 func (m *MonitorServer)Statusi(w http.ResponseWriter, r *http.Request) {
+	ip,_,_ := net.SplitHostPort(r.RemoteAddr)
+	LOG.VLog(3).Debugf("Get Request from %s",ip)
 	m.monitor.MonitorReport(m.result)
-	w.Header().Set("Server","Golang Server")
+	w.Header().Set("Server","Golang Statusi Server")
 	w.WriteHeader(200)
 	var infos string
 	infos += "<h1>Machine Info</h1>"
@@ -120,7 +124,7 @@ func (m *MonitorServer)Serve(port int) {
 	LOG.Infof("Starting Http Monitor at %d", port)
 
 	// AttachProfiler http://stackoverflow.com/questions/19591065/profiling-go-web-application-built-with-gorillas-mux-with-net-http-pprof
-	r.PathPrefix("/debug/pprof/").Handler(http.DefaultServeMux)
+	r.PathPrefix(PprofDebugPath).Handler(http.DefaultServeMux)
 
 	err := http.ListenAndServe(serverAddr, r)
 	if (err != nil) {

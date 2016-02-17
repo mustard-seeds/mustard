@@ -137,6 +137,7 @@ func (c *Connection)Handle200(resp *http.Response, doc *pb.CrawlDoc) {
     doc.Header =  string(dumResp)
     doc.LastModify = resp.Header.Get("last-modified")
     doc.ContentType = resp.Header.Get("Content-Type")
+    LOG.VLog(3).Debugf("Fetch Success, url:%s,reqtype:%d",doc.Url,doc.CrawlParam.Rtype)
 }
 
 func (c *Connection)Handle30X(resp *http.Response, doc *pb.CrawlDoc) {
@@ -148,11 +149,13 @@ func (c *Connection)Handle30X(resp *http.Response, doc *pb.CrawlDoc) {
     } else {
         doc.RedirectUrl = redirectUrl
     }
+    LOG.VLog(3).Debugf("Fetch 30X, url:%s, redirecturl:%s, reqtype:%d",doc.Url,doc.RedirectUrl,doc.CrawlParam.Rtype)
 }
 func (c *Connection)HandleOther(resp *http.Response, err error, doc *pb.CrawlDoc) {
     if err != nil {
         doc.ErrorInfo = err.Error()
     }
+    LOG.VLog(3).Debugf("Fetch Code:%d, url:%s, reqtype:%d",doc.Code, doc.Url,doc.CrawlParam.Rtype)
 }
 func NewConnection() *Connection {
     return &Connection{

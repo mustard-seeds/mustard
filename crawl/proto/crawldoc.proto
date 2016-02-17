@@ -120,8 +120,8 @@ message CrawlRecord {
 
 message CrawlParam {
     Priority    pri         =   1;
-    int32   hostload        =   2;
-    int32    random_hostload =  3;
+    int32       hostload    =   2;
+    int32   random_hostload =   3;
     int32   fetcher_count   =   4;  // for multi fetcher, default should set 1, come from config file.
     bool    drop_content    =   5;
 
@@ -159,13 +159,14 @@ message CrawlDoc {
     // record error.Errors.
     string error_info   =   6;
     string  content =   7;
+    int64   content_length = 8;
     // compress at storage handler.
-    bool    content_compressed  = 8;
+    bool    content_compressed  = 9;
     // response header.
-    string  header  =   9;
-    string last_modify = 10;
+    string  header  =   10;
+    string last_modify = 11;
     // content type of the page, eg text/html
-    string content_type = 11;
+    string content_type = 12;
 
 
     repeated OutLink    indomain_outlinks = 30;
@@ -174,11 +175,11 @@ message CrawlDoc {
     int64 chash_0   =   32;
     int64 chash_1   =   33;
     // original encoding which is deteched by the page content
-    int32 orig_encoding   = 34;
+    string orig_encoding   = 34;
     // encoding after convert to utf8
     // the same with orig_encoding if convert fail
     // utf8 if convert success
-    int32 conv_encoding =   35;
+    string conv_encoding =   35;
     // language the page is detected to
     int32 language = 36;
 
