@@ -6,7 +6,7 @@
 //
 // The mapping from encoding labels to encodings is defined at
 // https://encoding.spec.whatwg.org/.
-package charset 
+package charset
 
 import (
 	"bytes"
@@ -16,10 +16,10 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"golang.org/x/net/html"
+	"mustard/internal/golang.org/x/net/html"
 	"mustard/internal/golang.org/x/text/encoding"
 	"mustard/internal/golang.org/x/text/encoding/charmap"
-	"golang.org/x/text/encoding/htmlindex"
+	"mustard/internal/golang.org/x/text/encoding/htmlindex"
 	"mustard/internal/golang.org/x/text/transform"
 )
 

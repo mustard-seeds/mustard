@@ -14,7 +14,7 @@ import (
 	"mustard/internal/golang.org/x/text/encoding"
 	"mustard/internal/golang.org/x/text/encoding/internal"
 	"mustard/internal/golang.org/x/text/transform"
-	"golang.org/x/text/encoding/internal/identifier"
+	"mustard/internal/golang.org/x/text/encoding/internal/identifier"
 )
 
 // These encodings vary only in the way clients should interpret them. Their

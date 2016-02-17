@@ -16,7 +16,7 @@ import (
 	"strconv"
 	"unicode/utf8"
 
-	"golang.org/x/text/encoding/internal/identifier"
+	"mustard/internal/golang.org/x/text/encoding/internal/identifier"
 	"mustard/internal/golang.org/x/text/transform"
 )
 

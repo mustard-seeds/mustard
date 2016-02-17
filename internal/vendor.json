@@ -103,7 +103,17 @@
 			"revisionTime": "2016-02-11T19:16:47+11:00"
 		},
 		{
+			"path": "golang.org/x/text/encoding/htmlindex",
+			"revision": "07b9a78963006a15c538ec5175243979025fa7a8",
+			"revisionTime": "2016-02-11T19:16:47+11:00"
+		},
+		{
 			"path": "golang.org/x/text/encoding/internal",
+			"revision": "07b9a78963006a15c538ec5175243979025fa7a8",
+			"revisionTime": "2016-02-11T19:16:47+11:00"
+		},
+		{
+			"path": "golang.org/x/text/encoding/internal/identifier",
 			"revision": "07b9a78963006a15c538ec5175243979025fa7a8",
 			"revisionTime": "2016-02-11T19:16:47+11:00"
 		},

@@ -7,7 +7,7 @@ package internal
 
 import (
 	"mustard/internal/golang.org/x/text/encoding"
-	"golang.org/x/text/encoding/internal/identifier"
+	"mustard/internal/golang.org/x/text/encoding/internal/identifier"
 	"mustard/internal/golang.org/x/text/transform"
 )
 

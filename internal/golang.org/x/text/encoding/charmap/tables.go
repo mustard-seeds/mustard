@@ -4,7 +4,7 @@ package charmap
 
 import (
 	"mustard/internal/golang.org/x/text/encoding"
-	"golang.org/x/text/encoding/internal/identifier"
+	"mustard/internal/golang.org/x/text/encoding/internal/identifier"
 )
 
 // CodePage437 is the IBM Code Page 437 encoding.

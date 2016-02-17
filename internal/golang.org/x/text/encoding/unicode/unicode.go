@@ -12,7 +12,7 @@ import (
 
 	"mustard/internal/golang.org/x/text/encoding"
 	"mustard/internal/golang.org/x/text/encoding/internal"
-	"golang.org/x/text/encoding/internal/identifier"
+	"mustard/internal/golang.org/x/text/encoding/internal/identifier"
 	"mustard/internal/golang.org/x/text/internal/utf8internal"
 	"mustard/internal/golang.org/x/text/runes"
 	"mustard/internal/golang.org/x/text/transform"
