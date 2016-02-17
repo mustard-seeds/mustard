@@ -24,6 +24,7 @@ type CrawlerType struct {
     DispatcherHost      *string
     DispatcherPort      *int
     DispatchAs          *string
+    DispatchAsDomainSlot * int
     DispatchLiveFeederRatio *float64
     DispatchFlushInterval  *int
     HttpPort            *int
@@ -56,7 +57,8 @@ var CrawlerConf = CrawlerType{
     GroupFeederMaxPending:flag.Int("group_feeder_max_pendings",5000,"feeder max pending for dispatcher"),
     DispatcherHost:flag.String("dispatcher_host","127.0.0.1","dispatcher host"),
     DispatcherPort:flag.Int("dispatcher_port",9000,"dispatcher port"),
-    DispatchAs:flag.String("dispatch_as","host","host or url, dispatch as"),
+    DispatchAs:flag.String("dispatch_as","host","host or url or domain, dispatch as"),
+    DispatchAsDomainSlot:flag.Int("dispatch_as_domain_slots",10,"dispatch as domain slot..."),
     DispatchLiveFeederRatio:flag.Float64("live_feeder_ratio", 0, "dispatcher live feeder ratio"),
     DispatchFlushInterval:flag.Int("dispatch_flush_interval", 10,"dispatch flush interval"),
     HttpPort:flag.Int("http_port",9050,"http port"),

@@ -18,6 +18,7 @@ import (
     "strconv"
     "mustard/utils/babysitter"
     "time"
+    crawl_base "mustard/crawl/base"
 )
 
 var CONF = conf.Conf
@@ -192,6 +193,15 @@ func (d *Dispatcher)SelectCrawler(doc *pb.CrawlDoc) uint32{
             host = doc.CrawlParam.FakeHost
         }
         key = hash.FingerPrint32(host)
+    } else if (*CONF.Crawler.DispatchAs == "domain") {
+        if (doc.CrawlParam.FakeHost != "") {
+            host = doc.CrawlParam.FakeHost
+        }
+        hostfp := hash.FingerPrint32(host)
+        domain := crawl_base.GetDomainFromHost(host)
+        domainfp := hash.FingerPrint32(domain)
+        key = domainfp + hostfp % uint32(*CONF.Crawler.DispatchAsDomainSlot)
+
     } else {
         key = hash.FingerPrint32(url)
     }

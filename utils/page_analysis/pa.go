@@ -95,3 +95,6 @@ func (p *HtmlParser)Parse(_url, _content string) (result bool, err error) {
 func (p *HtmlParser) GetDocument() *goquery.Document {
         return p._doc
 }
+func NewHtmlParser() *HtmlParser {
+        return &HtmlParser{}
+}

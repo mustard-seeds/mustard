@@ -15,7 +15,6 @@ import (
 var CONF = conf.Conf
 /*
 hostload,multifetcher,fake host,receivers
-
 priority
 tag,prime second
 randomhostload
@@ -38,6 +37,8 @@ type JobDescription struct {
     Custom_ua       bool        `json:"custom_ua,omitempty"`
     Follow_redirect bool        `json:"follow_redirect,omitempty"`
     Use_proxy       bool        `json:"use_proxy,omitempty"`
+    // if true, nofollow href will extract too.
+    NoFollow        bool        `json:"nofollow,omitempty"`
 }
 
 var NormalJobD = JobDescription{
@@ -301,6 +302,7 @@ func (h *TagParamFiller)Fill(jd *JobDescription, doc *pb.CrawlDoc) {
     doc.CrawlParam.CustomUa = jd.Custom_ua
     doc.CrawlParam.FollowRedirect = jd.Follow_redirect
     doc.CrawlParam.UseProxy = jd.Use_proxy
+    doc.CrawlParam.Nofollow = jd.NoFollow
     // storage
     if doc.CrawlParam.StoreEngine == "" {
         doc.CrawlParam.StoreEngine = jd.StoreEngine

@@ -124,6 +124,7 @@ message CrawlParam {
     int32   random_hostload =   3;
     int32   fetcher_count   =   4;  // for multi fetcher, default should set 1, come from config file.
     bool    drop_content    =   5;
+    bool    nofollow        =   6;
 
     string  store_engine    =   7;
     string  store_db        =   8;
@@ -172,8 +173,8 @@ message CrawlDoc {
     repeated OutLink    indomain_outlinks = 30;
     repeated OutLink    outdomain_outlinks = 31;
     // content hash(128 bit)
-    int64 chash_0   =   32;
-    int64 chash_1   =   33;
+    // int64 chash_0   =   32;
+    // int64 chash_1   =   33;
     // original encoding which is deteched by the page content
     string orig_encoding   = 34;
     // encoding after convert to utf8
@@ -181,7 +182,7 @@ message CrawlDoc {
     // utf8 if convert success
     string conv_encoding =   35;
     // language the page is detected to
-    int32 language = 36;
+    //int32 language = 36;
 
     string reservation = 40;
 
