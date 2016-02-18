@@ -11,6 +11,7 @@ import (
     crawl_base "mustard/crawl/base"
     "mustard/base/file"
     "encoding/json"
+    "mustard/base/hash"
 )
 var CONF = conf.Conf
 /*
@@ -130,6 +131,8 @@ func (p *PrepareParamFiller)Fill(jd *JobDescription, doc *pb.CrawlDoc) {
     }
     // fill url
     doc.Url = url_parser.NormalizeUrl(doc.RequestUrl)
+    // Use uint32 url hash for docid. key in db
+    doc.Docid = hash.FingerPrint32(doc.Url)
     doc.CrawlParam.FetchHint.Host = url_parser.GetURLObj(doc.Url).Host
     doc.CrawlParam.FetchHint.Path = url_parser.GetURLObj(doc.Url).Path
 }

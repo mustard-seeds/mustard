@@ -149,7 +149,7 @@ message CrawlHistory {
 }
 
 message CrawlDoc {
-    string  docid = 1;
+    uint32  docid = 1;
     string  request_url = 2;
     // url use to crawl. it's generated base on request url
     string  url = 3;
