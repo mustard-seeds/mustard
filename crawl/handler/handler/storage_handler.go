@@ -1,20 +1,20 @@
 package handler
 
 import (
-	"mustard/crawl/proto"
+    "mustard/crawl/proto"
 )
 
 type StorageHandler struct {
-	CrawlHandler
+    CrawlHandler
 }
 
-func (doc *StorageHandler) Accept(crawlDoc *proto.CrawlDoc) bool {
-	return true
+func (handler *StorageHandler)Accept(crawlDoc *proto.CrawlDoc) bool {
+    return true
 }
-func (doc *StorageHandler) Process(crawlDoc *proto.CrawlDoc) {
+func (handler *StorageHandler)Process(crawlDoc *proto.CrawlDoc) {
 }
 
 // use for create instance from a string
 func init() {
-	registerCrawlTaskType(&StorageHandler{})
+    registerCrawlTaskType(&StorageHandler{})
 }
