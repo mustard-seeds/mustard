@@ -11,6 +11,7 @@ type StorageHandler struct {
 func (handler *StorageHandler)Accept(crawlDoc *proto.CrawlDoc) bool {
     return true
 }
+// save doc to content db
 func (handler *StorageHandler)Process(crawlDoc *proto.CrawlDoc) {
 }
 
