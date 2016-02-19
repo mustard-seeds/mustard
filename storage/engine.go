@@ -1,16 +1,20 @@
 package storage
-
 import (
-    "mustard/crawl/proto"
+    . "mustard/storage/mongo"
+    . "mustard/crawl/proto"
 )
 
 /*
     Storage API Layer
 */
 type StorageEngine interface {
-    // crawldoc interface
-    Save(*proto.CrawlDoc) error
-    SaveBatch([]*proto.CrawlDoc) int
-    QueryById(docid string, *[]*proto.CrawlDoc) error
-    //TODO  what type api here???   filter for which field???
+    Save(*CrawlDoc) error
+    SaveBatch([]*CrawlDoc) int
+    QueryById(docid string, *[]*CrawlDoc) StorageEngine
+    QueryByTag(primaryTag string, secondTag []string)
+}
+
+func NewStorageEngine() StorageEngine {
+    // Decide which engine to use....
+    return NewMongoStorageEngine()
 }
