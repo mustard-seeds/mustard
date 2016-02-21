@@ -37,6 +37,10 @@ type CrawlerType struct {
     JobDescriptionConfFile *string
     // fetcher
     ProxyConfFile   *string
+    // storage handler
+    ContentDBServers *string
+    ContentDbName   *string
+    ContentDbTable  *string
 }
 
 var CrawlerConf = CrawlerType{
@@ -69,4 +73,8 @@ var CrawlerConf = CrawlerType{
     DefaultSendSpeed:flag.Int("default_send_speed",5,"default send speed for crawldocsender"),
     ProxyConfFile:flag.String("proxy_conf_file","etc/crawl/fetch_proxys.config","each line is a proxy host:port"),
     JobDescriptionConfFile:flag.String("job_description_conf_file","etc/crawl/job_description.json", "get job description from file"),
+    ContentDBServers:flag.String("content_db_servers","127.0.0.1:27017,127.0.0.1,27018","content db servers."),
+    ContentDbName:flag.String("content_db_name","CrawlContent","content db name"),
+    ContentDbTable:flag.String("content_db_table_name","Result","content db table name"),
+
 }
