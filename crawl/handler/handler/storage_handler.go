@@ -7,6 +7,7 @@ import (
     "mustard/base/time_util"
     LOG "mustard/base/log"
     "mustard/base/proto_util"
+    "mustard/base/string_util"
 )
 
 const (
@@ -62,6 +63,15 @@ func (handler *StorageHandler)Process(crawlDoc *proto.CrawlDoc) {
     docMsg := proto_util.FromProtoToString(crawlDoc)
     var newDoc proto.CrawlDoc
     proto_util.FromStringToProto(docMsg, &newDoc)
+    // compress and save
+    compressContent,err := string_util.Compress(newDoc.Content)
+    if err == nil {
+        newDoc.Content = compressContent
+        newDoc.ContentCompressed = true
+    } else {
+        LOG.VLog(2).Debugf("Compress Error url:%s,docid:%s,error:%s",
+                    newDoc.Url,newDoc.Docid,err.Error())
+    }
     handler.docs = append(handler.docs, &newDoc)
 }
 

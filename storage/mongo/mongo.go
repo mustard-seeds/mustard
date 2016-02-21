@@ -78,6 +78,7 @@ func (m *MongoStorageEngine)SaveBatchSavage(docs []*CrawlDoc) (int,error) {
     return len(docs),nil
 }
 func (m *MongoStorageEngine)SaveBatch(docs []*CrawlDoc) (int,error) {
+    // convert slice to ...
     container := make([]interface{},len(docs))
     for i,v := range docs {
         container[i] = interface{}(v)
@@ -91,8 +92,7 @@ func (m *MongoStorageEngine)SaveBatch(docs []*CrawlDoc) (int,error) {
     }
     return len(docs),nil
 }
-
-
+// TODO traverse batch interface, use callback maybe better
 
 
 ///////////// Singleton  ////////////////////////
