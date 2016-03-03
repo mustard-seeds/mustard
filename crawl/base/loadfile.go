@@ -17,7 +17,7 @@ func LoadConfigWithTwoField(name,filename,splitS string, last_load_time *int64) 
     filename = file.GetConfFile(filename)
     result := make(map[string]string)
     *last_load_time = time_util.GetCurrentTimeStamp()
-    LOG.Infof("Load Config %s",*CONF.Crawler.HostLoadConfigFile)
+    LOG.Infof("Load Config %s",filename)
     file.FileLineReader(filename, "#", func(line string){
         addr :=strings.Split(line, splitS)
         if len(addr) != 2 {
