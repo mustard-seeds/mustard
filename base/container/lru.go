@@ -5,10 +5,6 @@ import (
 	"sync"
 )
 
-type Element struct {
-	Value interface{}
-}
-
 type innerElement struct {
 	key  string
 	value *Element
@@ -24,8 +20,8 @@ type LRU struct {
 	sync.RWMutex
 }
 func (lru *LRU)Get(key string) (*Element,bool) {
-	lru.Lock()
-	defer lru.Unlock()
+	lru.RLock()
+	defer lru.RUnlock()
 	lru.totalReq += 1
 	v,exist := lru.index[key]
 	if !exist {
@@ -61,6 +57,14 @@ func (lru *LRU)full() bool {
 	return lru.Capacity == lru.Size()
 }
 
+func (lru *LRU)Traverse(f func(interface{})) {
+	lru.RLock()
+	defer lru.RUnlock()
+	for e := lru.list.Front(); e != nil; e = e.Next() {
+		f(e.Value)
+	}
+}
+
 func (lru *LRU)HitRatio() float32 {
 	if lru.totalReq == 0 {
 		return 0.0
@@ -68,17 +72,10 @@ func (lru *LRU)HitRatio() float32 {
 	return float32(lru.hitReq)/float32(lru.totalReq)
 }
 
-
-var _instance *LRU = nil
-var _init_ctx sync.Once
-
 func NewLRU(capacity int) *LRU {
-	_init_ctx.Do(func(){
-		_instance = &LRU{
-			list:list.New(),
-			index: make(map[string]*list.Element),
-			Capacity:capacity,
-		}
-	})
-	return _instance
+	return &LRU{
+		list:list.New(),
+		index: make(map[string]*list.Element),
+		Capacity:capacity,
+	}
 }
