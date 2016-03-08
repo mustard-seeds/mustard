@@ -48,7 +48,14 @@ func (lru *LRU)Set(key string, v interface{}) {
 	})
 	lru.index[key] = lru.list.Front()
 }
-
+func (lru *LRU)JustUpdateValue(key string, v interface{}) bool {
+	cache,exist := lru.index[key]
+	if !exist {
+		return false
+	}
+	cache.Value.(*innerElement).value.Value = v
+	return true
+}
 func (lru *LRU)Size() int {
 	return lru.list.Len()
 }

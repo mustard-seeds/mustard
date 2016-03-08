@@ -51,4 +51,12 @@ func TestLru(t *testing.T) {
 	if len(l.index) != 3 {
 		t.Errorf("lru fix size error.")
 	}
+	l.JustUpdateValue("a",&lruTestStruct{
+		name:"newA",
+		age:4,
+	})
+	newA,_ := l.Get("a")
+	if newA.Value.(*lruTestStruct).name != "newA" {
+		t.Errorf("JustUpdateValue Error.")
+	}
 }
