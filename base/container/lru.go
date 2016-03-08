@@ -68,7 +68,7 @@ func (lru *LRU)Traverse(f func(interface{})) {
 	lru.RLock()
 	defer lru.RUnlock()
 	for e := lru.list.Front(); e != nil; e = e.Next() {
-		f(e.Value)
+		f(e.Value.(*innerElement).value.Value)
 	}
 }
 
