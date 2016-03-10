@@ -211,3 +211,11 @@ func Shuffle(slice *[]byte) {
         (*slice)[i], (*slice)[j] = (*slice)[j],(*slice)[i]
     }
 }
+func ShuffleInt(len int) []byte {
+    sli := []byte{}
+    for i := 0;i < len; i++ {
+        sli = append(sli, byte(i))
+    }
+    Shuffle(&sli)
+    return sli
+}
