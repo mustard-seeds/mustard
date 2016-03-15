@@ -20,18 +20,27 @@ type LRU struct {
 	sync.RWMutex
 }
 func (lru *LRU)Get(key string) (*Element,bool) {
-	lru.RLock()
-	defer lru.RUnlock()
 	lru.totalReq += 1
 	v,exist := lru.index[key]
 	if !exist {
 		return nil,exist
 	}
+	lru.Lock() // write lock, because it will modify list...
+	defer lru.Unlock()
 	lru.hitReq += 1
 	lru.list.MoveToFront(v)
 	return v.Value.(*innerElement).value,true
 }
-
+func (lru *LRU)Delete(key string) {
+	lru.Lock()
+	defer lru.Unlock()
+	ele,exist := lru.index[key]
+	if !exist {
+		return
+	}
+	lru.list.Remove(ele)
+	delete(lru.index, key)
+}
 func (lru *LRU)Set(key string, v interface{}) {
 	lru.Lock()
 	defer lru.Unlock()

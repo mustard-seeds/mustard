@@ -17,7 +17,8 @@ func machineInfo() map[string]string {
 	return machine
 }
 func statusInfo() map[string]string {
-	//TODO process mem,cpu,fd, load
+	// TODO process mem,cpu,fd, load
+	// https://github.com/c9s/goprocinfo
 	status := make(map[string]string)
 	return status
 }

@@ -59,4 +59,9 @@ func TestLru(t *testing.T) {
 	if newA.Value.(*lruTestStruct).name != "newA" {
 		t.Errorf("JustUpdateValue Error.")
 	}
+	l.Delete("x")
+	_,exist := l.Get("x")
+	if exist {
+		t.Errorf("delete not success")
+	}
 }
