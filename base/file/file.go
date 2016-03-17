@@ -4,7 +4,7 @@ import (
     "os"
     "io/ioutil"
     "strings"
-//	LOG "mustard/base/log"
+    LOG "mustard/base/log"
     "mustard/base"
     "path/filepath"
     "fmt"
@@ -29,7 +29,22 @@ func FileExist(name string) bool {
     s, err := os.Stat(name)
     return !os.IsNotExist(err) && (!(s != nil && s.IsDir()))
 }
-
+func FileLineReaderSoftly(filename string, comment string, f func(line string)) bool {
+    filename = GetConfFile(filename)
+    if Exist(filename) {
+        LOG.Errorf("%s not exist.", filename)
+        return false
+    }
+    content,_ := ReadFileToString(filename)
+    lines := strings.Split(content,"\n")
+    for _,l := range lines {
+        if strings.TrimSpace(l) == "" || strings.HasPrefix(l, "#") {
+            continue
+        }
+        f(l)
+    }
+    return true
+}
 func FileLineReader(filename string, comment string, f func(line string)) {
     filename = GetConfFile(filename)
     base.CHECK(Exist(filename), "File %s Not Exist.",filename)

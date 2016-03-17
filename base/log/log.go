@@ -8,7 +8,7 @@ import (
 	"os"
 	"flag"
 	"strings"
-	"ddns/internal/gcodebase/conf"
+	"mustard/base/conf"
 )
 
 /*
@@ -22,6 +22,7 @@ type logS struct {
 }
 
 var _log logS
+var _error_log logS
 
 // level0 -- 10
 var levelLog []*logS
@@ -61,24 +62,24 @@ func Warningf(format string, v ...interface{}) {
 }
 
 func Error(v ...interface{}) {
-	_log.logI.SetPrefix("[Error]")
-	_log.logI.Output(2, fmt.Sprintln(v...))
+	_error_log.logI.SetPrefix("[Error]")
+	_error_log.logI.Output(2, fmt.Sprintln(v...))
 }
 
 func Errorf(format string, v ...interface{}) {
-	_log.logI.SetPrefix("[Error]")
-	_log.logI.Output(2, fmt.Sprintf(format, v...))
+	_error_log.logI.SetPrefix("[Error]")
+	_error_log.logI.Output(2, fmt.Sprintf(format, v...))
 }
 
 func Fatal(v ...interface{}) {
-	_log.logI.SetPrefix("[Fatal]")
-	_log.logI.Output(2, fmt.Sprint(v...))
+	_error_log.logI.SetPrefix("[Fatal]")
+	_error_log.logI.Output(2, fmt.Sprint(v...))
 	os.Exit(1)
 }
 
 func Fatalf(format string, v ...interface{}) {
-	_log.logI.SetPrefix("[Fatal]")
-	_log.logI.Output(2, fmt.Sprintf(format, v...))
+	_error_log.logI.SetPrefix("[Fatal]")
+	_error_log.logI.Output(2, fmt.Sprintf(format, v...))
 	os.Exit(1)
 }
 
@@ -91,30 +92,42 @@ func VLog(level int) *logS {
 	}
 	return levelLog[level]
 }
-
+func getLogger(logfile string) *log.Logger {
+	var writer io.Writer
+	if logfile != "" {
+		f, err := os.OpenFile(logfile, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+		if err != nil {
+			log.Fatalf("error opening file: %v", err)
+		}
+		writer = f
+	} else {
+		writer = os.Stdout
+	}
+	if *conf.Conf.Stdout && writer != os.Stdout {
+		writer = io.MultiWriter(writer, os.Stdout)
+	}
+	return log.New(writer, "", log.LstdFlags|log.Lshortfile)
+}
 var _log_instance *log.Logger = nil
 var _log_init_ctx sync.Once
 func NewLogger() *log.Logger {
 	_log_init_ctx.Do(func(){
-		var writer io.Writer
-		if logFile := *conf.Conf.LogFile; logFile != "" {
-			f, err := os.OpenFile(logFile, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
-			if err != nil {
-				log.Fatalf("error opening file: %v", err)
-			}
-			writer = f
-		} else {
-			writer = os.Stdout
-		}
-		if *conf.Conf.Stdout && writer != os.Stdout {
-			writer = io.MultiWriter(writer, os.Stdout)
-		}
-		_log_instance = log.New(writer, "", log.LstdFlags|log.Lshortfile)
+		_log_instance = getLogger(*conf.Conf.LogFile)
 	})
 	return _log_instance
 }
+
+var _error_log_instance *log.Logger = nil
+var _error_log_init_ctx sync.Once
+func NewErrorLogger() *log.Logger {
+	_error_log_init_ctx.Do(func(){
+		_error_log_instance = getLogger(*conf.Conf.ErrorLogFile)
+	})
+	return _error_log_instance
+}
 func init() {
 	_log.logI = NewLogger()
+	_error_log.logI = NewErrorLogger()
 	levelLog = append(levelLog, &logS{logI:NewLogger(), level:0,})
 	levelLog = append(levelLog, &logS{logI:NewLogger(), level:1,})
 	levelLog = append(levelLog, &logS{logI:NewLogger(), level:2,})

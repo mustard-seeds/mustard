@@ -7,6 +7,7 @@ import (
 
 type ConfType struct {
     LogFile     *string
+    ErrorLogFile     *string
     LogV        *int
     Stdout      *bool
 
@@ -24,6 +25,7 @@ type ConfType struct {
 
 var _conf = ConfType{
     LogFile     :   flag.String("log_file", "", "log to file"),
+    ErrorLogFile     :   flag.String("error_log_file", "", "log to file"),
     LogV        :   flag.Int("v", 3, "log level for debug"),
     Stdout      :   flag.Bool("stdout", true, "output stdout or not"),
     UseTLS      :   flag.Bool("use_tls", false, "use tls or not"),

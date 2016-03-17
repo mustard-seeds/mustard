@@ -5,8 +5,7 @@ import (
 )
 
 func TestLOG(t *testing.T) {
-    VLog(3).Debug("")
-    if _log.level != 3 {
+    if VLog(3).level != 3 {
         t.Error("LOG Level set not work.")
     }
     Info("")
