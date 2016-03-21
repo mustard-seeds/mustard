@@ -22,11 +22,14 @@ type CrawlDocSender struct {
 	port      int
 	Connected bool
 	client    pb.CrawlServiceClient
+
 	// statistic
 	timestamp            int64
 	url_sent_in_sec      int
 	max_url_send_per_sec int
 	send_speed           int
+
+	LastReconnectTimeStamp int64
 }
 
 func (s *CrawlDocSender) SetMaxSpeed(speed int) {
@@ -115,6 +118,7 @@ func (s *CrawlDocSender) Connect() bool {
 		var serverAddr string
 		string_util.StringAppendF(&serverAddr, "%s:%d", s.host, s.port)
 		conn, err := grpc.Dial(serverAddr, opts...)
+		s.LastReconnectTimeStamp = time_util.GetCurrentTimeStamp()
 		if err != nil {
 			LOG.Errorf("fail to dial %s: %v", serverAddr, err)
 			s.Connected = false
