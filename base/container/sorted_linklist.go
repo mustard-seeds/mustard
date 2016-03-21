@@ -10,7 +10,7 @@ type SortedLinkList struct {
 	sync.RWMutex
 }
 
-func (sl *SortedLinkList)Insert(v CompareElement) *Element {
+func (sl *SortedLinkList) Insert(v CompareElement) *Element {
 	sl.Lock()
 	defer sl.Unlock()
 	var location *list.Element = nil
@@ -21,11 +21,11 @@ func (sl *SortedLinkList)Insert(v CompareElement) *Element {
 		}
 	}
 	if location == nil {
-		return sl.List.PushBack(&Element{Value:v}).Value.(*Element)
+		return sl.List.PushBack(&Element{Value: v}).Value.(*Element)
 	}
-	return sl.List.InsertBefore(&Element{Value:v},location).Value.(*Element)
+	return sl.List.InsertBefore(&Element{Value: v}, location).Value.(*Element)
 }
-func (sl *SortedLinkList)Update(ele *Element) {
+func (sl *SortedLinkList) Update(ele *Element) {
 	sl.Lock()
 	defer sl.Unlock()
 	var self *list.Element = nil
@@ -45,26 +45,26 @@ func (sl *SortedLinkList)Update(ele *Element) {
 		if location == nil {
 			sl.List.MoveToBack(self)
 		} else {
-			sl.List.MoveBefore(self,location)
+			sl.List.MoveBefore(self, location)
 		}
 	}
 }
-func (sl *SortedLinkList)Front() *Element {
+func (sl *SortedLinkList) Front() *Element {
 	sl.RLock()
 	defer sl.RUnlock()
 	return sl.List.Front().Value.(*Element)
 }
-func (sl *SortedLinkList)Back() *Element {
+func (sl *SortedLinkList) Back() *Element {
 	sl.RLock()
 	defer sl.RUnlock()
 	return sl.List.Back().Value.(*Element)
 }
-func (sl *SortedLinkList)Length() int {
+func (sl *SortedLinkList) Length() int {
 	return sl.List.Len()
 }
 
 func NewSortedLinkList() *SortedLinkList {
 	return &SortedLinkList{
-		List:list.New(),
+		List: list.New(),
 	}
 }

@@ -1,14 +1,14 @@
 package log
 
 import (
+	"flag"
+	"fmt"
 	"io"
 	"log"
-	"fmt"
-	"sync"
-	"os"
-	"flag"
-	"strings"
 	"mustard/base/conf"
+	"os"
+	"strings"
+	"sync"
 )
 
 /*
@@ -27,14 +27,14 @@ var _error_log logS
 // level0 -- 10
 var levelLog []*logS
 
-func (l *logS)Debugf(format string, v ...interface{}) {
+func (l *logS) Debugf(format string, v ...interface{}) {
 	if l.level <= *conf.Conf.LogV {
 		l.logI.SetPrefix("[Debug]")
 		l.logI.Output(2, fmt.Sprintf(format, v...))
 	}
 }
 
-func (l *logS)Debug(v ...interface{}) {
+func (l *logS) Debug(v ...interface{}) {
 	if l.level <= *conf.Conf.LogV {
 		l.logI.SetPrefix("[Debug]")
 		l.logI.Output(2, fmt.Sprintln(v...))
@@ -108,10 +108,12 @@ func getLogger(logfile string) *log.Logger {
 	}
 	return log.New(writer, "", log.LstdFlags|log.Lshortfile)
 }
+
 var _log_instance *log.Logger = nil
 var _log_init_ctx sync.Once
+
 func NewLogger() *log.Logger {
-	_log_init_ctx.Do(func(){
+	_log_init_ctx.Do(func() {
 		_log_instance = getLogger(*conf.Conf.LogFile)
 	})
 	return _log_instance
@@ -119,8 +121,9 @@ func NewLogger() *log.Logger {
 
 var _error_log_instance *log.Logger = nil
 var _error_log_init_ctx sync.Once
+
 func NewErrorLogger() *log.Logger {
-	_error_log_init_ctx.Do(func(){
+	_error_log_init_ctx.Do(func() {
 		_error_log_instance = getLogger(*conf.Conf.ErrorLogFile)
 	})
 	return _error_log_instance
@@ -128,17 +131,17 @@ func NewErrorLogger() *log.Logger {
 func init() {
 	_log.logI = NewLogger()
 	_error_log.logI = NewErrorLogger()
-	levelLog = append(levelLog, &logS{logI:NewLogger(), level:0,})
-	levelLog = append(levelLog, &logS{logI:NewLogger(), level:1,})
-	levelLog = append(levelLog, &logS{logI:NewLogger(), level:2,})
-	levelLog = append(levelLog, &logS{logI:NewLogger(), level:3,})
-	levelLog = append(levelLog, &logS{logI:NewLogger(), level:4,})
-	levelLog = append(levelLog, &logS{logI:NewLogger(), level:5,})
-	levelLog = append(levelLog, &logS{logI:NewLogger(), level:6,})
-	levelLog = append(levelLog, &logS{logI:NewLogger(), level:7,})
-	levelLog = append(levelLog, &logS{logI:NewLogger(), level:8,})
-	levelLog = append(levelLog, &logS{logI:NewLogger(), level:9,})
-	levelLog = append(levelLog, &logS{logI:NewLogger(), level:10,})
+	levelLog = append(levelLog, &logS{logI: NewLogger(), level: 0})
+	levelLog = append(levelLog, &logS{logI: NewLogger(), level: 1})
+	levelLog = append(levelLog, &logS{logI: NewLogger(), level: 2})
+	levelLog = append(levelLog, &logS{logI: NewLogger(), level: 3})
+	levelLog = append(levelLog, &logS{logI: NewLogger(), level: 4})
+	levelLog = append(levelLog, &logS{logI: NewLogger(), level: 5})
+	levelLog = append(levelLog, &logS{logI: NewLogger(), level: 6})
+	levelLog = append(levelLog, &logS{logI: NewLogger(), level: 7})
+	levelLog = append(levelLog, &logS{logI: NewLogger(), level: 8})
+	levelLog = append(levelLog, &logS{logI: NewLogger(), level: 9})
+	levelLog = append(levelLog, &logS{logI: NewLogger(), level: 10})
 	// dump flags in log, because of dependency cycle
 	dumpFlags()
 }

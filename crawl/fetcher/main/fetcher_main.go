@@ -1,11 +1,11 @@
 package main
 
 import (
+	"mustard/base/conf"
 	"mustard/crawl/handler"
+	"mustard/utils/babysitter"
 	"runtime"
 	"time"
-	"mustard/utils/babysitter"
-	"mustard/base/conf"
 )
 
 var CONF = conf.Conf
@@ -23,6 +23,6 @@ func main() {
 
 	for {
 		c.PrintStatus()
-		time.Sleep(time.Second*10)
+		time.Sleep(time.Second * 10)
 	}
 }

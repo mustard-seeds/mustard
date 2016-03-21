@@ -9,9 +9,9 @@ import (
 
 	"golang.org/x/text/encoding"
 	"golang.org/x/text/encoding/charmap"
-	"mustard/internal/golang.org/x/text/encoding/internal/identifier"
 	"golang.org/x/text/encoding/unicode"
 	"golang.org/x/text/language"
+	"mustard/internal/golang.org/x/text/encoding/internal/identifier"
 )
 
 func TestGet(t *testing.T) {

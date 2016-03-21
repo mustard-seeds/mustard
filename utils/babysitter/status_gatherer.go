@@ -1,15 +1,15 @@
 package babysitter
 
 import (
-	"os"
 	"fmt"
-	"strings"
-	"strconv"
 	"io/ioutil"
-	"path/filepath"
-	"mustard/base/time_util"
 	"mustard/base/string_util"
+	"mustard/base/time_util"
 	"mustard/internal/github.com/c9s/goprocinfo/linux"
+	"os"
+	"path/filepath"
+	"strconv"
+	"strings"
 )
 
 func machineInfo() map[string]string {
@@ -26,17 +26,17 @@ func statusInfo() map[string]string {
 	// TODO process mem,cpu,fd, load
 	// https://github.com/c9s/goprocinfo
 	pid := os.Getpid()
-	processPath:= filepath.Join("/proc", strconv.Itoa(pid))
+	processPath := filepath.Join("/proc", strconv.Itoa(pid))
 	status := make(map[string]string)
-	mem,err1 := linux.ReadMemInfo("/proc/meminfo")
+	mem, err1 := linux.ReadMemInfo("/proc/meminfo")
 	if err1 == nil {
-		status["MemTotal"] = strconv.Itoa(int(mem.MemTotal/1000))
-		status["MemFree"] = strconv.Itoa(int(mem.MemFree + mem.Cached + mem.Buffers)/1000)
+		status["MemTotal"] = strconv.Itoa(int(mem.MemTotal / 1000))
+		status["MemFree"] = strconv.Itoa(int(mem.MemFree+mem.Cached+mem.Buffers) / 1000)
 	}
 	processMem, err2 := linux.ReadProcessStatus(filepath.Join(processPath, "status"))
 	if err2 == nil {
-		status["VmRSS"] = strconv.Itoa(int(processMem.VmRSS/1000))
-		status["VmSize"] = strconv.Itoa(int(processMem.VmSize/1000))
+		status["VmRSS"] = strconv.Itoa(int(processMem.VmRSS / 1000))
+		status["VmSize"] = strconv.Itoa(int(processMem.VmSize / 1000))
 	}
 	if err1 == nil && err2 == nil {
 		status["MemUse"] = strconv.FormatFloat(float64(processMem.VmRSS)/float64(mem.MemTotal), 'f', -1, 64)

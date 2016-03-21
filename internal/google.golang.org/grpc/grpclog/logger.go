@@ -34,7 +34,7 @@
 /*
 Package grpclog defines logging for grpc.
 */
-package grpclog 
+package grpclog
 
 import (
 	"log"

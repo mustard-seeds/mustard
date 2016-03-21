@@ -1,7 +1,8 @@
-package container
+package main
 
 import (
-	"testing"
+	"fmt"
+	. "mustard/base/container"
 )
 
 type IElement struct {
@@ -13,7 +14,13 @@ func (i *IElement) Compare(e *Element) bool {
 	return i.Age < e.Value.(*IElement).Age
 }
 
-func TestSortList(t *testing.T) {
+func printlist(l *SortedLinkList) {
+	for e := l.List.Front(); e != nil; e = e.Next() {
+		fmt.Printf("=%v=", e.Value.(*Element).Value.(*IElement))
+	}
+	fmt.Println()
+}
+func main() {
 	l := NewSortedLinkList()
 	l.Insert(&IElement{"xx", 3})
 	l.Insert(&IElement{"xx", 2})
@@ -22,11 +29,9 @@ func TestSortList(t *testing.T) {
 	l.Insert(&IElement{"xx", 21})
 	l.Insert(&IElement{"xx", 1})
 	e := l.Insert(&IElement{"xx", 4})
-	if l.Front().Value.(*IElement).Age != 21 {
-	}
+	printlist(l)
 	e.Value.(*IElement).Age = 233
 	l.Update(e)
-	if l.Front().Value.(*IElement).Age != 233 {
-		t.Errorf("sort update error.")
-	}
+	printlist(l)
+
 }

@@ -1,16 +1,16 @@
 package log
 
 import (
+	"fmt"
 	"io"
 	"log"
-	"fmt"
-	"os"
 	"mustard/base/conf"
+	"os"
 )
 
 /*
 * Debug(Log Level) - Info - Warning - Error -
-*/
+ */
 
 // combination version, it hide log.Logger method.
 type logS struct {
@@ -47,9 +47,9 @@ func (l *logS) Warning(v ...interface{}) {
 	l.logI.Output(2, fmt.Sprintln(v...))
 }
 
-func (l *logS) Warningf(format string,v ...interface{}) {
+func (l *logS) Warningf(format string, v ...interface{}) {
 	l.logI.SetPrefix("[Warning]")
-	l.logI.Output(2, fmt.Sprintf(format,v...))
+	l.logI.Output(2, fmt.Sprintf(format, v...))
 }
 
 func (l *logS) Error(v ...interface{}) {
@@ -59,16 +59,16 @@ func (l *logS) Error(v ...interface{}) {
 
 func (l *logS) Errorf(format string, v ...interface{}) {
 	l.logI.SetPrefix("[Error]")
-	l.logI.Output(2, fmt.Sprintf(format,v...))
+	l.logI.Output(2, fmt.Sprintf(format, v...))
 }
 
-func (l *logS)Fatal(v ...interface{}) {
+func (l *logS) Fatal(v ...interface{}) {
 	l.logI.SetPrefix("[Fatal]")
 	l.logI.Output(2, fmt.Sprint(v...))
 	os.Exit(1)
 }
 
-func (l *logS)Fatalf(format string, v ...interface{}) {
+func (l *logS) Fatalf(format string, v ...interface{}) {
 	l.logI.SetPrefix("[Fatal]")
 	l.logI.Output(2, fmt.Sprintf(format, v...))
 	os.Exit(1)
@@ -99,6 +99,7 @@ func init() {
 	}
 	Log.logI = log.New(writer, "", log.LstdFlags|log.Lshortfile)
 }
+
 // test
 /*
 import "mustard/base/log

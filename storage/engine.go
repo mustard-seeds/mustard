@@ -1,10 +1,11 @@
 package storage
+
 import (
-    . "mustard/storage/mongo"
+	. "mustard/storage/mongo"
 )
 
 /*
-    Storage API Layer
+   Storage API Layer
 */
 
 var STORAGE_ENGINE_IMPL = NewMongoStorageEngine()

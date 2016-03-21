@@ -7,9 +7,9 @@ import (
 
 func TestCrawlFeeder(t *testing.T) {
 	doc := &proto.CrawlDoc{
-		RequestUrl:"http://www.a.com/index.html",
-		CrawlParam:&proto.CrawlParam{
-			Pri:proto.Priority_NORMAL,
+		RequestUrl: "http://www.a.com/index.html",
+		CrawlParam: &proto.CrawlParam{
+			Pri: proto.Priority_NORMAL,
 		},
 	}
 	feeder := CrawlerFeeder{}

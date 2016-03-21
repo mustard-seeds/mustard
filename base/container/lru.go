@@ -6,42 +6,43 @@ import (
 )
 
 type innerElement struct {
-	key  string
+	key   string
 	value *Element
 }
 
 type LRU struct {
-	list *list.List
-	index map[string]*list.Element
+	list     *list.List
+	index    map[string]*list.Element
 	Capacity int
 	// for statistic
 	totalReq int
 	hitReq   int
 	sync.RWMutex
 }
-func (lru *LRU)Get(key string) (*Element,bool) {
+
+func (lru *LRU) Get(key string) (*Element, bool) {
 	lru.totalReq += 1
-	v,exist := lru.index[key]
+	v, exist := lru.index[key]
 	if !exist {
-		return nil,exist
+		return nil, exist
 	}
 	lru.Lock() // write lock, because it will modify list...
 	defer lru.Unlock()
 	lru.hitReq += 1
 	lru.list.MoveToFront(v)
-	return v.Value.(*innerElement).value,true
+	return v.Value.(*innerElement).value, true
 }
-func (lru *LRU)Delete(key string) {
+func (lru *LRU) Delete(key string) {
 	lru.Lock()
 	defer lru.Unlock()
-	ele,exist := lru.index[key]
+	ele, exist := lru.index[key]
 	if !exist {
 		return
 	}
 	lru.list.Remove(ele)
 	delete(lru.index, key)
 }
-func (lru *LRU)Set(key string, v interface{}) {
+func (lru *LRU) Set(key string, v interface{}) {
 	lru.Lock()
 	defer lru.Unlock()
 	if lru.full() {
@@ -50,30 +51,30 @@ func (lru *LRU)Set(key string, v interface{}) {
 		lru.list.Remove(last)
 	}
 	lru.list.PushFront(&innerElement{
-		key:key,
-		value:&Element{
-			Value:v,
+		key: key,
+		value: &Element{
+			Value: v,
 		},
 	})
 	lru.index[key] = lru.list.Front()
 }
-func (lru *LRU)JustUpdateValue(key string, v interface{}) bool {
-	cache,exist := lru.index[key]
+func (lru *LRU) JustUpdateValue(key string, v interface{}) bool {
+	cache, exist := lru.index[key]
 	if !exist {
 		return false
 	}
 	cache.Value.(*innerElement).value.Value = v
 	return true
 }
-func (lru *LRU)Size() int {
+func (lru *LRU) Size() int {
 	return lru.list.Len()
 }
 
-func (lru *LRU)full() bool {
+func (lru *LRU) full() bool {
 	return lru.Capacity == lru.Size()
 }
 
-func (lru *LRU)Traverse(f func(interface{})) {
+func (lru *LRU) Traverse(f func(interface{})) {
 	lru.RLock()
 	defer lru.RUnlock()
 	for e := lru.list.Front(); e != nil; e = e.Next() {
@@ -81,17 +82,17 @@ func (lru *LRU)Traverse(f func(interface{})) {
 	}
 }
 
-func (lru *LRU)HitRatio() float32 {
+func (lru *LRU) HitRatio() float32 {
 	if lru.totalReq == 0 {
 		return 0.0
 	}
-	return float32(lru.hitReq)/float32(lru.totalReq)
+	return float32(lru.hitReq) / float32(lru.totalReq)
 }
 
 func NewLRU(capacity int) *LRU {
 	return &LRU{
-		list:list.New(),
-		index: make(map[string]*list.Element),
-		Capacity:capacity,
+		list:     list.New(),
+		index:    make(map[string]*list.Element),
+		Capacity: capacity,
 	}
 }

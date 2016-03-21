@@ -16,4 +16,3 @@ func TestNormalize1(t *testing.T) {
 		t.Error("Normalize Fail:" + u)
 	}
 }
-

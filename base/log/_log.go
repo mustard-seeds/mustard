@@ -1,17 +1,17 @@
 package log
 
 import (
+	"fmt"
 	"io"
 	"log"
-	"os"
-	"fmt"
-	"unsafe"
 	"mustard/base/conf"
+	"os"
+	"unsafe"
 )
 
 /*
 * Debug(Log Level) - Info - Warning - Error -
-*/
+ */
 // inheritance version
 type logS struct {
 	log.Logger

@@ -1,9 +1,9 @@
 package url_parser
 
 import (
-	"net/url"
-	"mustard/internal/github.com/PuerkitoBio/purell"
 	LOG "mustard/base/log"
+	"mustard/internal/github.com/PuerkitoBio/purell"
+	"net/url"
 )
 
 func GetHost(_url string) string {

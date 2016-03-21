@@ -1,8 +1,8 @@
 package babysitter
 
 import (
-	"testing"
 	"net/http"
+	"testing"
 )
 
 func TestMonitorResult(t *testing.T) {

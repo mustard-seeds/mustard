@@ -7,7 +7,7 @@ import (
 
 func TestHostLoadQueue(t *testing.T) {
 	hlq := newHostLoadQueue()
-	doc := &proto.CrawlDoc{RequestUrl:"http://a.com/"}
+	doc := &proto.CrawlDoc{RequestUrl: "http://a.com/"}
 	if !hlq.Empty() {
 		t.Error("HostLoadQueue not empty after init?")
 	}
@@ -15,7 +15,7 @@ func TestHostLoadQueue(t *testing.T) {
 	if 1 != hlq.Size() {
 		t.Error("HostLoadQueue Size not right.")
 	}
-	top,err := hlq.Top()
+	top, err := hlq.Top()
 	if err != nil {
 		t.Error("Top get Error.")
 	}

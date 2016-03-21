@@ -32,7 +32,7 @@
  */
 
 // Package metadata define the structure of the metadata supported by gRPC library.
-package metadata 
+package metadata
 
 import (
 	"encoding/base64"

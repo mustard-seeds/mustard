@@ -1,12 +1,12 @@
 package time_util
 
 import (
-    "testing"
+	"testing"
 )
 
 func TestGetReadableTime(t *testing.T) {
-    at := GetReadableTime(1454387433)
-    if at != "2016-02-02 12:30 CST" {
-        t.Error("GetReadableTime Error")
-    }
+	at := GetReadableTime(1454387433)
+	if at != "2016-02-02 12:30 CST" {
+		t.Error("GetReadableTime Error")
+	}
 }
