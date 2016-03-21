@@ -11,7 +11,10 @@ import (
 	"time"
 )
 
-const ()
+const (
+	kCrawlDocSendRetryTimes = 5
+	kCrawlDocSendRetryInterval = 1
+)
 
 // send to CrawlServiceServer
 type CrawlDocSender struct {
@@ -33,11 +36,18 @@ func (s *CrawlDocSender) Init() {
 	s.Connect()
 }
 func (s *CrawlDocSender) Flush(doc *pb.CrawlDoc) {
-	for !s.Connect() {
+	for i := 0; i < kCrawlDocSendRetryTimes;i++ {
+		if s.Connect() {
+			break
+		}
 		LOG.VLog(2).Debugf("Connect CrawlServiceServer %s:%d Fail", s.host, s.port)
-		time_util.Sleep(1)
+		time_util.Sleep(kCrawlDocSendRetryInterval)
 	}
-	for true {
+	if s.Connected == false {
+		LOG.Errorf("[FLUSH]Can not send to %s:%d Drop Doc %s", s.host, s.port, doc.String())
+		return
+	}
+	for i := 0; i < kCrawlDocSendRetryTimes;i++ {
 		// check healthy
 		_, err := s.client.IsHealthy(context.Background(), &pb.CrawlRequest{Request: "CrawlDocSender"})
 		if err == nil {
@@ -45,9 +55,14 @@ func (s *CrawlDocSender) Flush(doc *pb.CrawlDoc) {
 		}
 		LOG.VLog(2).Debugf("UnHealthy CrawlServiceServer %s:%d. Reason:%s", s.host, s.port, err.Error())
 		s.Connected = false
-		time_util.Sleep(2)
+		time_util.Sleep(kCrawlDocSendRetryInterval * 2)
+	}
+	if s.Connected == false {
+		LOG.Errorf("[FLUSH]NotHealthy %s:%d Drop Doc %s", s.host, s.port, doc.String())
+		return
 	}
 
+	// Make Sure s.Connected is True before below code.
 	now := time_util.GetCurrentTimeStamp()
 	if now > s.timestamp {
 		s.timestamp = now

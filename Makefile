@@ -17,5 +17,7 @@ test:
 	go test ./utils/...
 doc:
 	godoc -http=:6060 -index
+fmt:
+	go fmt ./...
 clean:
 	rm ./bin/*_main
