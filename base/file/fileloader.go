@@ -20,13 +20,13 @@ type ConfigLoader struct {
 }
 func (c *ConfigLoader)ShouldReloadConfig() bool {
 	// only call once...
-	newVersion := c.GetVersionFromFile()
-	if time_util.GetCurrentTimeStamp() - c.Last_load_time > c.Reload_interval &&
-		c.Last_version < newVersion {
-
+	if time_util.GetCurrentTimeStamp() - c.Last_load_time > c.Reload_interval {
 		c.Last_load_time = time_util.GetCurrentTimeStamp()
-		c.Last_version = newVersion
-		return true
+		newVersion := c.GetVersionFromFile()
+		if c.Last_version < newVersion {
+			c.Last_version = newVersion
+			return true
+		}
 	}
 	return false
 }

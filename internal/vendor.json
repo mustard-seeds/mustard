@@ -18,6 +18,11 @@
 			"revisionTime": "2015-07-30T10:44:59-07:00"
 		},
 		{
+			"path": "github.com/c9s/goprocinfo/linux",
+			"revision": "19cb9f127a9c8d2034cf59ccb683cdb94b9deb6c",
+			"revisionTime": "2015-10-26T03:11:53+08:00"
+		},
+		{
 			"path": "github.com/golang/protobuf/proto",
 			"revision": "2402d76f3d41f928c7902a765dfc872356dd3aad",
 			"revisionTime": "2016-01-06T12:58:00+11:00"
