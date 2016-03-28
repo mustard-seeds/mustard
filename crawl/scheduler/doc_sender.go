@@ -73,7 +73,7 @@ func (s *CrawlDocSender) Flush(doc *pb.CrawlDoc) {
 		s.send_speed = s.url_sent_in_sec
 	} else if s.url_sent_in_sec >= s.max_url_send_per_sec {
 		for now <= s.timestamp {
-			time_util.Usleep(10 * 1000)
+			time.Sleep(time.Millisecond * 100)
 			now = time_util.GetCurrentTimeStamp()
 		}
 		LOG.VLog(1).Debugf("Send url Speed %d/Second", s.url_sent_in_sec)

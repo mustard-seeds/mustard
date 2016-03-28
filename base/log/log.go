@@ -27,6 +27,13 @@ var _error_log logS
 // level0 -- 10
 var levelLog []*logS
 
+func (l *logS) DebugTag(TAG ,format string, v ...interface{}) {
+	if l.level <= *conf.Conf.LogV {
+		l.logI.SetPrefix("[Debug]")
+		l.logI.Output(2, fmt.Sprintf("[%s]%s", TAG, fmt.Sprintf(format, v...)))
+	}
+}
+
 func (l *logS) Debugf(format string, v ...interface{}) {
 	if l.level <= *conf.Conf.LogV {
 		l.logI.SetPrefix("[Debug]")
