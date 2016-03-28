@@ -1,7 +1,7 @@
 package mongo
 
 import (
-	"gopkg.in/mgo.v2"
+	"mustard/internal/gopkg.in/mgo.v2"
 	LOG "mustard/base/log"
 	"mustard/base/time_util"
 	. "mustard/crawl/proto"

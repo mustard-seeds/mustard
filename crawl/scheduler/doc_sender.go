@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	kCrawlDocSendRetryTimes = 5
+	kCrawlDocSendRetryTimes    = 5
 	kCrawlDocSendRetryInterval = 1
 )
 
@@ -39,7 +39,7 @@ func (s *CrawlDocSender) Init() {
 	s.Connect()
 }
 func (s *CrawlDocSender) Flush(doc *pb.CrawlDoc) {
-	for i := 0; i < kCrawlDocSendRetryTimes;i++ {
+	for i := 0; i < kCrawlDocSendRetryTimes; i++ {
 		if s.Connect() {
 			break
 		}
@@ -50,7 +50,7 @@ func (s *CrawlDocSender) Flush(doc *pb.CrawlDoc) {
 		LOG.Errorf("[FLUSH]Can not send to %s:%d Drop Doc %s", s.host, s.port, doc.String())
 		return
 	}
-	for i := 0; i < kCrawlDocSendRetryTimes;i++ {
+	for i := 0; i < kCrawlDocSendRetryTimes; i++ {
 		// check healthy
 		_, err := s.client.IsHealthy(context.Background(), &pb.CrawlRequest{Request: "CrawlDocSender"})
 		if err == nil {

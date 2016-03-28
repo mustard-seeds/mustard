@@ -13,7 +13,7 @@ import (
 
 const (
 	kCrawlDocSenderCouldRetryInterval int64 = 2
-	kDefaultResponseHandlerSendSpeed = 1000
+	kDefaultResponseHandlerSendSpeed        = 1000
 )
 
 type ResponseHandler struct {
@@ -47,7 +47,7 @@ func (handler *ResponseHandler) Process(crawlDoc *proto.CrawlDoc) {
 				handler.connectionPools[serverAddr] = sender
 			}
 			if sender.Connected ||
-			time_util.GetCurrentTimeStamp() - sender.LastReconnectTimeStamp > kCrawlDocSenderCouldRetryInterval {
+				time_util.GetCurrentTimeStamp()-sender.LastReconnectTimeStamp > kCrawlDocSenderCouldRetryInterval {
 				sender.Flush(crawlDoc)
 				sendSuccess = true
 				break

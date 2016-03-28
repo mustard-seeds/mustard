@@ -3,7 +3,7 @@
 // license that can be found in the LICENSE file.
 
 // Package tag contains functionality handling tags and related data.
-package tag
+package tag 
 
 import "sort"
 

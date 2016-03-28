@@ -8,10 +8,7 @@ import (
 	"mustard/internal/golang.org/x/text/encoding"
 	"mustard/internal/golang.org/x/text/encoding/charmap"
 	"mustard/internal/golang.org/x/text/encoding/internal/identifier"
-	"mustard/internal/golang.org/x/text/encoding/japanese"
-	"mustard/internal/golang.org/x/text/encoding/korean"
 	"mustard/internal/golang.org/x/text/encoding/simplifiedchinese"
-	"mustard/internal/golang.org/x/text/encoding/traditionalchinese"
 	"mustard/internal/golang.org/x/text/encoding/unicode"
 )
 
@@ -93,11 +90,6 @@ var encodings = [numEncodings]encoding.Encoding{
 	macintoshCyrillic: charmap.MacintoshCyrillic,
 	gbk:               simplifiedchinese.GBK,
 	gb18030:           simplifiedchinese.GB18030,
-	big5:              traditionalchinese.Big5,
-	eucjp:             japanese.EUCJP,
-	iso2022jp:         japanese.ISO2022JP,
-	shiftJIS:          japanese.ShiftJIS,
-	euckr:             korean.EUCKR,
 	replacement:       encoding.Replacement,
 	utf16be:           unicode.UTF16(unicode.BigEndian, unicode.IgnoreBOM),
 	utf16le:           unicode.UTF16(unicode.LittleEndian, unicode.IgnoreBOM),

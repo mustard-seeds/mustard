@@ -326,11 +326,11 @@ func (*FetchHint) ProtoMessage()               {}
 func (*FetchHint) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{2} }
 
 type CrawlRecord struct {
-	RequestTime int64           `protobuf:"varint,1,opt,name=request_time" json:"request_time,omitempty"`
+	RequestTime int64           `protobuf:"varint,1,opt,name=request_time,json=requestTime" json:"request_time,omitempty"`
 	Fetcher     *ConnectionInfo `protobuf:"bytes,2,opt,name=fetcher" json:"fetcher,omitempty"`
 	// time the doc fetched
-	FetchTime int64 `protobuf:"varint,3,opt,name=fetch_time" json:"fetch_time,omitempty"`
-	FetchUse  int64 `protobuf:"varint,4,opt,name=fetch_use" json:"fetch_use,omitempty"`
+	FetchTime int64 `protobuf:"varint,3,opt,name=fetch_time,json=fetchTime" json:"fetch_time,omitempty"`
+	FetchUse  int64 `protobuf:"varint,4,opt,name=fetch_use,json=fetchUse" json:"fetch_use,omitempty"`
 }
 
 func (m *CrawlRecord) Reset()                    { *m = CrawlRecord{} }
@@ -348,23 +348,23 @@ func (m *CrawlRecord) GetFetcher() *ConnectionInfo {
 type CrawlParam struct {
 	Pri            Priority          `protobuf:"varint,1,opt,name=pri,enum=proto.Priority" json:"pri,omitempty"`
 	Hostload       int32             `protobuf:"varint,2,opt,name=hostload" json:"hostload,omitempty"`
-	RandomHostload int32             `protobuf:"varint,3,opt,name=random_hostload" json:"random_hostload,omitempty"`
-	FetcherCount   int32             `protobuf:"varint,4,opt,name=fetcher_count" json:"fetcher_count,omitempty"`
-	DropContent    bool              `protobuf:"varint,5,opt,name=drop_content" json:"drop_content,omitempty"`
+	RandomHostload int32             `protobuf:"varint,3,opt,name=random_hostload,json=randomHostload" json:"random_hostload,omitempty"`
+	FetcherCount   int32             `protobuf:"varint,4,opt,name=fetcher_count,json=fetcherCount" json:"fetcher_count,omitempty"`
+	DropContent    bool              `protobuf:"varint,5,opt,name=drop_content,json=dropContent" json:"drop_content,omitempty"`
 	Nofollow       bool              `protobuf:"varint,6,opt,name=nofollow" json:"nofollow,omitempty"`
-	StoreEngine    string            `protobuf:"bytes,7,opt,name=store_engine" json:"store_engine,omitempty"`
-	StoreDb        string            `protobuf:"bytes,8,opt,name=store_db" json:"store_db,omitempty"`
-	StoreTable     string            `protobuf:"bytes,9,opt,name=store_table" json:"store_table,omitempty"`
-	FakeHost       string            `protobuf:"bytes,10,opt,name=fake_host" json:"fake_host,omitempty"`
-	FetchHint      *FetchHint        `protobuf:"bytes,11,opt,name=fetch_hint" json:"fetch_hint,omitempty"`
+	StoreEngine    string            `protobuf:"bytes,7,opt,name=store_engine,json=storeEngine" json:"store_engine,omitempty"`
+	StoreDb        string            `protobuf:"bytes,8,opt,name=store_db,json=storeDb" json:"store_db,omitempty"`
+	StoreTable     string            `protobuf:"bytes,9,opt,name=store_table,json=storeTable" json:"store_table,omitempty"`
+	FakeHost       string            `protobuf:"bytes,10,opt,name=fake_host,json=fakeHost" json:"fake_host,omitempty"`
+	FetchHint      *FetchHint        `protobuf:"bytes,11,opt,name=fetch_hint,json=fetchHint" json:"fetch_hint,omitempty"`
 	Receivers      []*ConnectionInfo `protobuf:"bytes,12,rep,name=receivers" json:"receivers,omitempty"`
 	Referer        string            `protobuf:"bytes,20,opt,name=referer" json:"referer,omitempty"`
-	CustomUa       bool              `protobuf:"varint,21,opt,name=custom_ua" json:"custom_ua,omitempty"`
-	UseProxy       bool              `protobuf:"varint,22,opt,name=use_proxy" json:"use_proxy,omitempty"`
-	FollowRedirect bool              `protobuf:"varint,23,opt,name=follow_redirect" json:"follow_redirect,omitempty"`
+	CustomUa       bool              `protobuf:"varint,21,opt,name=custom_ua,json=customUa" json:"custom_ua,omitempty"`
+	UseProxy       bool              `protobuf:"varint,22,opt,name=use_proxy,json=useProxy" json:"use_proxy,omitempty"`
+	FollowRedirect bool              `protobuf:"varint,23,opt,name=follow_redirect,json=followRedirect" json:"follow_redirect,omitempty"`
 	Rtype          RequestType       `protobuf:"varint,101,opt,name=rtype,enum=proto.RequestType" json:"rtype,omitempty"`
-	PrimaryTag     string            `protobuf:"bytes,102,opt,name=primary_tag" json:"primary_tag,omitempty"`
-	SecondaryTag   []string          `protobuf:"bytes,103,rep,name=secondary_tag" json:"secondary_tag,omitempty"`
+	PrimaryTag     string            `protobuf:"bytes,102,opt,name=primary_tag,json=primaryTag" json:"primary_tag,omitempty"`
+	SecondaryTag   []string          `protobuf:"bytes,103,rep,name=secondary_tag,json=secondaryTag" json:"secondary_tag,omitempty"`
 }
 
 func (m *CrawlParam) Reset()                    { *m = CrawlParam{} }
@@ -396,37 +396,37 @@ func (*CrawlHistory) Descriptor() ([]byte, []int) { return fileDescriptor0, []in
 
 type CrawlDoc struct {
 	Docid      uint32 `protobuf:"varint,1,opt,name=docid" json:"docid,omitempty"`
-	RequestUrl string `protobuf:"bytes,2,opt,name=request_url" json:"request_url,omitempty"`
+	RequestUrl string `protobuf:"bytes,2,opt,name=request_url,json=requestUrl" json:"request_url,omitempty"`
 	// url use to crawl. it's generated base on request url
 	Url string `protobuf:"bytes,3,opt,name=url" json:"url,omitempty"`
 	// fill at fetcher, http response information
-	RedirectUrl string     `protobuf:"bytes,4,opt,name=redirect_url" json:"redirect_url,omitempty"`
+	RedirectUrl string     `protobuf:"bytes,4,opt,name=redirect_url,json=redirectUrl" json:"redirect_url,omitempty"`
 	Code        ReturnType `protobuf:"varint,5,opt,name=code,enum=proto.ReturnType" json:"code,omitempty"`
 	// record error.Errors.
-	ErrorInfo     string `protobuf:"bytes,6,opt,name=error_info" json:"error_info,omitempty"`
+	ErrorInfo     string `protobuf:"bytes,6,opt,name=error_info,json=errorInfo" json:"error_info,omitempty"`
 	Content       string `protobuf:"bytes,7,opt,name=content" json:"content,omitempty"`
-	ContentLength int64  `protobuf:"varint,8,opt,name=content_length" json:"content_length,omitempty"`
+	ContentLength int64  `protobuf:"varint,8,opt,name=content_length,json=contentLength" json:"content_length,omitempty"`
 	// compress at storage handler.
-	ContentCompressed bool `protobuf:"varint,9,opt,name=content_compressed" json:"content_compressed,omitempty"`
+	ContentCompressed bool `protobuf:"varint,9,opt,name=content_compressed,json=contentCompressed" json:"content_compressed,omitempty"`
 	// response header.
 	Header     string `protobuf:"bytes,10,opt,name=header" json:"header,omitempty"`
-	LastModify string `protobuf:"bytes,11,opt,name=last_modify" json:"last_modify,omitempty"`
+	LastModify string `protobuf:"bytes,11,opt,name=last_modify,json=lastModify" json:"last_modify,omitempty"`
 	// content type of the page, eg text/html
-	ContentType       string     `protobuf:"bytes,12,opt,name=content_type" json:"content_type,omitempty"`
-	IndomainOutlinks  []*OutLink `protobuf:"bytes,30,rep,name=indomain_outlinks" json:"indomain_outlinks,omitempty"`
-	OutdomainOutlinks []*OutLink `protobuf:"bytes,31,rep,name=outdomain_outlinks" json:"outdomain_outlinks,omitempty"`
+	ContentType       string     `protobuf:"bytes,12,opt,name=content_type,json=contentType" json:"content_type,omitempty"`
+	IndomainOutlinks  []*OutLink `protobuf:"bytes,30,rep,name=indomain_outlinks,json=indomainOutlinks" json:"indomain_outlinks,omitempty"`
+	OutdomainOutlinks []*OutLink `protobuf:"bytes,31,rep,name=outdomain_outlinks,json=outdomainOutlinks" json:"outdomain_outlinks,omitempty"`
 	// content hash(128 bit)
 	// int64 chash_0   =   32;
 	// int64 chash_1   =   33;
 	// original encoding which is deteched by the page content
-	OrigEncoding string `protobuf:"bytes,34,opt,name=orig_encoding" json:"orig_encoding,omitempty"`
+	OrigEncoding string `protobuf:"bytes,34,opt,name=orig_encoding,json=origEncoding" json:"orig_encoding,omitempty"`
 	// encoding after convert to utf8
 	// the same with orig_encoding if convert fail
 	// utf8 if convert success
-	ConvEncoding string       `protobuf:"bytes,35,opt,name=conv_encoding" json:"conv_encoding,omitempty"`
+	ConvEncoding string       `protobuf:"bytes,35,opt,name=conv_encoding,json=convEncoding" json:"conv_encoding,omitempty"`
 	Reservation  string       `protobuf:"bytes,40,opt,name=reservation" json:"reservation,omitempty"`
-	CrawlParam   *CrawlParam  `protobuf:"bytes,50,opt,name=crawl_param" json:"crawl_param,omitempty"`
-	CrawlRecord  *CrawlRecord `protobuf:"bytes,60,opt,name=crawl_record" json:"crawl_record,omitempty"`
+	CrawlParam   *CrawlParam  `protobuf:"bytes,50,opt,name=crawl_param,json=crawlParam" json:"crawl_param,omitempty"`
+	CrawlRecord  *CrawlRecord `protobuf:"bytes,60,opt,name=crawl_record,json=crawlRecord" json:"crawl_record,omitempty"`
 }
 
 func (m *CrawlDoc) Reset()                    { *m = CrawlDoc{} }
@@ -517,6 +517,10 @@ func init() {
 // Reference imports to suppress errors if they are not otherwise used.
 var _ context.Context
 var _ grpc.ClientConn
+
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the grpc package it is being compiled against.
+const _ = grpc.SupportPackageIsVersion1
 
 // Client API for CrawlService service
 
