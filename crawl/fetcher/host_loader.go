@@ -35,7 +35,7 @@ func (hlq *HostLoadQueue) Push(doc *proto.CrawlDoc) error {
 	if hlq.Full() {
 		return errors.New("Host Queue Full")
 	}
-	if doc.CrawlParam.Pri == proto.Priority_URGENT {
+	if doc.CrawlParam != nil && doc.CrawlParam.Pri == proto.Priority_URGENT {
 		hlq.urgent = append(hlq.urgent, doc)
 	} else {
 		hlq.normal = append(hlq.normal, doc)
