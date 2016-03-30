@@ -45,7 +45,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/golang/protobuf/proto"
+	"mustard/internal/github.com/golang/protobuf/proto"
 	"mustard/internal/golang.org/x/net/context"
 	"mustard/internal/google.golang.org/grpc/codes"
 	"mustard/internal/google.golang.org/grpc/metadata"
