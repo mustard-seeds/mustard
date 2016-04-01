@@ -49,6 +49,7 @@ func (handler *StorageHandler) DBThread() {
 	}
 }
 func (handler *StorageHandler) Init() bool {
+	// TODO: change to init URI
 	STORAGE_ENGINE_IMPL.Init(*CONF.Crawler.ContentDBServers)
 	handler.docs = make([]*proto.CrawlDoc, 0)
 	go handler.DBThread()
