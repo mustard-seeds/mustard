@@ -3,6 +3,7 @@ package string_util
 import (
 	"fmt"
 	"strings"
+        "encoding/json"
 )
 
 func Purify(s string, dirty ...string) string {
@@ -20,4 +21,8 @@ func IsEmpty(s string) bool {
 func StringAppendF(s *string, format string, a ...interface{}) {
 	app := fmt.Sprintf(format, a...)
 	*s = *s + app
+}
+func PrettyFormat(v interface{}) string {
+        outs,_ := json.MarshalIndent(v,"","\t")
+        return string(outs)
 }

@@ -3,7 +3,6 @@ package hash
 import (
 	"fmt"
 	"math/rand"
-	"mustard/base/time_util"
 	"strconv"
 	"strings"
 	"time"
@@ -207,11 +206,13 @@ func GenerateKeyWithGroup(length int, group []string) string {
 }
 
 func Shuffle(slice *[]byte) {
-	for i := range *slice {
-		rand.Seed(time_util.GetCurrentTimeStamp())
-		j := RandomIntn(i + 1)
-		(*slice)[i], (*slice)[j] = (*slice)[j], (*slice)[i]
-	}
+        ShuffleSub(slice, 0, len(*slice))
+}
+func ShuffleSub(slice *[]byte, start, end int) {
+        for i := end - 1;i > start;i-- {
+                j := RandomIntn(i - start + 1)
+                (*slice)[i], (*slice)[j + start] = (*slice)[j + start], (*slice)[i]
+        }
 }
 func ShuffleInt(len int) []byte {
 	sli := []byte{}
